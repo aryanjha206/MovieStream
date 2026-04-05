@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+
+{% block title %}MovieStream | Dashboard{% endblock %}
+
+{% block content %}
+<section class="dashboard-hero">
+    <div>
+        <span class="eyebrow">Dashboard</span>
+        <h1>Welcome, {{ current_user_name }}</h1>
+        <p>Search, browse, and play instantly.</p>
+    </div>
+    <form class="toolbar" method="get" action="{{ url_for('dashboard') }}">
+        <input type="search" name="q" placeholder="Search movies..." value="{{ search_term }}">
+        <select name="category">
+            <option value="">All categories</option>
+            {% for category in categories %}
+                <option value="{{ category }}" {% if category == selected_category %}selected{% endif %}>{{ category }}</option>
+            {% endfor %}
+        </select>
+        <button type="submit" class="button button-primary">Apply</button>
+    </form>
+</section>
+
+<section id="movieSections">
+    {% for section_name, movies in sections.items() %}
+        <div class="content-block">
+            <div class="section-heading">
+                <h2>{{ section_name }}</h2>
+                <p>{{ movies|length }} title{% if movies|length != 1 %}s{% endif %}</p>
+            </div>
+            <div class="movie-row">
+                {% for movie in movies %}
+                    <article
+                        class="movie-card interactive"
+                        data-title="{{ movie.title }}"
+                        data-category="{{ movie.category }}"
+                        data-description="{{ movie.description }}"
+                        data-embed="{{ movie.embed_url }}"
+                        data-video="{{ movie.video_url }}"
+                    >
+                        <img src="{{ movie.thumbnail }}" alt="{{ movie.title }}">
+                        <div class="movie-card-body">
+                            <h3>{{ movie.title }}</h3>
+                            <p>{{ movie.category }}</p>
+                            <button type="button" class="button button-secondary play-trigger">Watch</button>
+                        </div>
+                    </article>
+                {% else %}
+                    <div class="empty-state slim">
+                        <p>No titles available in this section.</p>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    {% endfor %}
+</section>
+
+<div class="player-modal" id="playerModal">
+    <div class="player-panel">
+        <button type="button" class="close-player" id="closePlayer" aria-label="Close player">Close</button>
+        <div class="player-copy">
+            <h2 id="playerTitle">Now Playing</h2>
+            <p id="playerMeta"></p>
+        </div>
+        <div class="player-frame">
+            <iframe id="movieFrame" src="" title="Movie player" allowfullscreen></iframe>
+            <video id="movieVideo" controls hidden></video>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
+{% endblock %}

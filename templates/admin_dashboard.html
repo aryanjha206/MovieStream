@@ -1,0 +1,108 @@
+{% extends "base.html" %}
+
+{% block title %}MovieStream | Admin Dashboard{% endblock %}
+
+{% block content %}
+<section class="dashboard-hero">
+    <div>
+        <span class="eyebrow">Admin</span>
+        <h1>Manage catalog</h1>
+        <p>Movies, categories, and highlights.</p>
+    </div>
+</section>
+
+<section class="admin-grid">
+    <div class="admin-card">
+        <h2 id="movieFormTitle">Add Movie</h2>
+        <form method="post" action="{{ url_for('add_movie') }}" class="stack-form" id="movieForm">
+            <label>Title</label>
+            <input type="text" name="title" id="movieTitle" required>
+            <label>Category</label>
+            <select name="category" id="movieCategory" required>
+                {% for category in categories %}
+                    <option value="{{ category.name }}">{{ category.name }}</option>
+                {% endfor %}
+                <option value="Uncategorized">Uncategorized</option>
+            </select>
+            <label>Thumbnail URL</label>
+            <input type="url" name="thumbnail" id="movieThumbnail" required>
+            <label>Video URL / Embed Link</label>
+            <input type="url" name="video_url" id="movieVideoUrl" required>
+            <label>Description</label>
+            <textarea name="description" id="movieDescription" rows="4" placeholder="Short synopsis"></textarea>
+            <label class="checkbox-row">
+                <input type="checkbox" name="is_trending" id="movieTrending">
+                <span>Mark as trending</span>
+            </label>
+            <div class="inline-actions">
+                <button type="submit" class="button button-primary" id="movieSubmitButton">Save Movie</button>
+                <button type="button" class="button button-ghost" id="resetMovieForm">Reset</button>
+            </div>
+        </form>
+    </div>
+
+    <div class="admin-card">
+        <h2>Add Category</h2>
+        <form method="post" action="{{ url_for('add_category') }}" class="stack-form">
+            <label>Category Name</label>
+            <input type="text" name="name" placeholder="Sci-Fi" required>
+            <button type="submit" class="button button-secondary">Add Category</button>
+        </form>
+        <div class="chips-wrap">
+            {% for category in categories %}
+                <div class="category-chip">
+                    <span>{{ category.name }}</span>
+                    <form method="post" action="{{ url_for('delete_category', category_id=category._id) }}">
+                        <button type="submit">Delete</button>
+                    </form>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<section class="content-block">
+    <div class="section-heading">
+        <h2>Existing Movies</h2>
+        <p>{{ movies|length }} titles</p>
+    </div>
+    <div class="admin-movie-list">
+        {% for movie in movies %}
+            <article class="admin-movie-card">
+                <img src="{{ movie.thumbnail }}" alt="{{ movie.title }}">
+                <div class="admin-movie-copy">
+                    <h3>{{ movie.title }}</h3>
+                    <p>{{ movie.category }}{% if movie.is_trending %} | Trending{% endif %}</p>
+                    <small>{{ movie.description or 'No description provided.' }}</small>
+                    <div class="inline-actions">
+                        <button
+                            type="button"
+                            class="button button-secondary edit-movie-trigger"
+                            data-id="{{ movie.id }}"
+                            data-title="{{ movie.title }}"
+                            data-category="{{ movie.category }}"
+                            data-thumbnail="{{ movie.thumbnail }}"
+                            data-video="{{ movie.video_url }}"
+                            data-description="{{ movie.description }}"
+                            data-trending="{{ 'true' if movie.is_trending else 'false' }}"
+                        >
+                            Edit
+                        </button>
+                        <form method="post" action="{{ url_for('delete_movie', movie_id=movie.id) }}">
+                            <button type="submit" class="button button-ghost">Delete</button>
+                        </form>
+                    </div>
+                </div>
+            </article>
+        {% else %}
+            <div class="empty-state">
+                <p>No movies added yet.</p>
+            </div>
+        {% endfor %}
+    </div>
+</section>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/admin.js') }}"></script>
+{% endblock %}

@@ -1,0 +1,135 @@
+{% extends "base.html" %}
+
+{% block title %}MovieStream | Sign Up{% endblock %}
+
+{% block content %}
+<section class="single-auth">
+    <div class="auth-panel auth-panel-wide auth-panel-highlight">
+        <span class="eyebrow">Create Account</span>
+        <h1>Set up your access</h1>
+        <p>Short, guided signup.</p>
+
+        <div class="signup-progress">
+            <div class="signup-progress-bar">
+                <span
+                    class="signup-progress-fill {% if email_verified %}verified{% endif %}"
+                    id="signupProgressFill"
+                    data-email-verified="{{ 'true' if email_verified else 'false' }}"
+                ></span>
+            </div>
+            <p id="signupStepLabel">Step by step setup</p>
+        </div>
+
+        <div class="signup-wizard" id="signupWizard" data-email-verified="{{ 'true' if email_verified else 'false' }}" data-current-step="{{ current_step }}">
+            <section class="signup-step {% if current_step == 1 %}active{% endif %}" data-step="1">
+                <div class="signup-card">
+                    <h2>Enter your email</h2>
+                    <p>We’ll send a verification code.</p>
+                    <form method="post" action="{{ url_for('signup_send_otp') }}" class="stack-form">
+                        <label>Email Address</label>
+                        <input
+                            type="email"
+                            name="email"
+                            value="{{ email }}"
+                            placeholder="you@example.com"
+                            {% if email_verified %}readonly{% endif %}
+                            required
+                        >
+                        <button type="submit" class="button button-primary">
+                            {% if email_verified %}Send Again{% else %}Send OTP{% endif %}
+                        </button>
+                    </form>
+                </div>
+            </section>
+
+            <section class="signup-step {% if current_step == 2 %}active{% endif %}" data-step="2">
+                <div class="signup-card">
+                    <h2>Enter OTP</h2>
+                    <p>Use the 6-digit code from email.</p>
+                    <form method="post" action="{{ url_for('signup_verify_otp') }}" class="stack-form">
+                        <label>OTP Code</label>
+                        <input type="text" name="otp" maxlength="6" placeholder="123456" {% if email_verified %}disabled{% endif %} required>
+                        <div class="inline-actions">
+                            <button type="button" class="button button-ghost step-back">Back</button>
+                            <button type="submit" class="button button-primary" {% if email_verified %}disabled{% endif %}>
+                                {% if email_verified %}Verified{% else %}Verify OTP{% endif %}
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </section>
+
+            <form method="post" action="{{ url_for('signup_create_account') }}" class="stack-form signup-step-form" id="signupPasswordForm">
+                <section class="signup-step {% if current_step == 3 %}active{% endif %}" data-step="3">
+                    <div class="signup-card">
+                        <h2>What is your name?</h2>
+                        <input type="text" name="name" value="{{ name }}" placeholder="Your full name" required>
+                        <div class="inline-actions">
+                            <button type="button" class="button button-ghost step-back">Back</button>
+                            <button type="button" class="button button-primary step-next">Continue</button>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="signup-step {% if current_step == 4 %}active{% endif %}" data-step="4">
+                    <div class="signup-card">
+                        <h2>Enter your age</h2>
+                        <input type="number" name="age" min="18" value="{{ age }}" placeholder="18+" required>
+                        <div class="inline-actions">
+                            <button type="button" class="button button-ghost step-back">Back</button>
+                            <button type="button" class="button button-primary step-next">Continue</button>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="signup-step {% if current_step == 5 %}active{% endif %}" data-step="5">
+                    <div class="signup-card">
+                        <h2>Create your password</h2>
+                        <input type="password" name="password" minlength="8" placeholder="Minimum 8 characters" required>
+                        <label>Confirm Password</label>
+                        <input type="password" name="confirm_password" minlength="8" placeholder="Re-enter password" required>
+                        <div class="inline-actions">
+                            <button type="button" class="button button-ghost step-back">Back</button>
+                            <button type="button" class="button button-primary step-next">Continue</button>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="signup-step {% if current_step == 6 %}active{% endif %}" data-step="6">
+                    <div class="signup-card">
+                        <h2>Accept Terms & Conditions</h2>
+                        <div class="verified-banner {% if email_verified %}active{% endif %}">
+                            Email status: <strong>{% if email_verified %}Verified{% else %}OTP verification pending{% endif %}</strong>
+                        </div>
+
+                        <div class="terms-panel">
+                            <p>MovieStream is for users aged 18+.</p>
+                            <p>Keep your email, OTP, and password private.</p>
+                            <p>Catalog items and playback links may change or be removed at any time.</p>
+                            <p>Use the platform only for lawful personal viewing.</p>
+                            <p>Unauthorized access to user or admin areas is prohibited.</p>
+                            <p>Account details are stored only to support login, verification, and service operation.</p>
+                        </div>
+
+                        <label class="checkbox-row">
+                            <input type="checkbox" name="accept_terms" required>
+                            <span>I accept the Terms & Conditions and confirm that I am 18+.</span>
+                        </label>
+
+                        <div class="inline-actions">
+                            <button type="button" class="button button-ghost step-back">Back</button>
+                            <button type="submit" class="button button-primary">Create Account</button>
+                        </div>
+                    </div>
+                </section>
+            </form>
+        </div>
+
+        <p class="muted-copy">Already registered? <a href="{{ url_for('login') }}">Sign in</a></p>
+    </div>
+</section>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/signup.js') }}"></script>
+{% endblock %}

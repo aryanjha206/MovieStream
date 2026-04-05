@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+
+{% block title %}MovieStream | Login{% endblock %}
+
+{% block content %}
+<section class="single-auth">
+    <div class="auth-panel auth-panel-highlight">
+        <span class="eyebrow">Welcome Back</span>
+        <h1>Sign in</h1>
+        <p>Fast access to your library.</p>
+        <form method="post" action="{{ url_for('login') }}" class="stack-form">
+            <label>Email Address</label>
+            <input type="email" name="email" placeholder="you@example.com" required>
+            <label>Password</label>
+            <input type="password" name="password" placeholder="Your password" required>
+            <label class="checkbox-row">
+                <input type="checkbox" name="accept_terms" required>
+                <span>I accept the Terms & Conditions and confirm that I am 18+.</span>
+            </label>
+            <button type="submit" class="button button-primary">Continue</button>
+        </form>
+        <p class="muted-copy">New here? <a href="{{ url_for('signup') }}">Create account</a></p>
+    </div>
+</section>
+{% endblock %}

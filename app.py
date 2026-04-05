@@ -120,6 +120,13 @@ def build_embed_url(video_url):
     return video_url
 
 
+def normalize_url(value):
+    normalized = (value or "").strip()
+    if normalized and not re.match(r"^[a-zA-Z][a-zA-Z0-9+.-]*://", normalized):
+        normalized = f"https://{normalized.lstrip('/')}"
+    return normalized
+
+
 def serialize_movie(movie):
     return {
         "id": str(movie["_id"]),
@@ -495,8 +502,8 @@ def delete_category(category_id):
 def add_movie():
     title = request.form.get("title", "").strip()
     category = request.form.get("category", "").strip()
-    thumbnail = request.form.get("thumbnail", "").strip()
-    video_url = request.form.get("video_url", "").strip()
+    thumbnail = normalize_url(request.form.get("thumbnail", ""))
+    video_url = normalize_url(request.form.get("video_url", ""))
     description = request.form.get("description", "").strip()
     is_trending = request.form.get("is_trending") == "on"
 
@@ -504,18 +511,23 @@ def add_movie():
         flash("Title, category, thumbnail, and video URL are required.", "danger")
         return redirect(url_for("admin_dashboard"))
 
-    movies_collection.insert_one(
-        {
-            "title": title,
-            "category": category,
-            "thumbnail": thumbnail,
-            "video_url": video_url,
-            "description": description,
-            "is_trending": is_trending,
-            "created_at": utc_now(),
-            "updated_at": utc_now(),
-        }
-    )
+    try:
+        movies_collection.insert_one(
+            {
+                "title": title,
+                "category": category,
+                "thumbnail": thumbnail,
+                "video_url": video_url,
+                "description": description,
+                "is_trending": is_trending,
+                "created_at": utc_now(),
+                "updated_at": utc_now(),
+            }
+        )
+    except Exception:
+        flash("Movie could not be added. Check the database connection and try again.", "danger")
+        return redirect(url_for("admin_dashboard"))
+
     flash("Movie added successfully.", "success")
     return redirect(url_for("admin_dashboard"))
 
@@ -525,8 +537,8 @@ def add_movie():
 def update_movie(movie_id):
     title = request.form.get("title", "").strip()
     category = request.form.get("category", "").strip()
-    thumbnail = request.form.get("thumbnail", "").strip()
-    video_url = request.form.get("video_url", "").strip()
+    thumbnail = normalize_url(request.form.get("thumbnail", ""))
+    video_url = normalize_url(request.form.get("video_url", ""))
     description = request.form.get("description", "").strip()
     is_trending = request.form.get("is_trending") == "on"
 
@@ -534,20 +546,25 @@ def update_movie(movie_id):
         flash("All movie fields except description are required.", "danger")
         return redirect(url_for("admin_dashboard"))
 
-    movies_collection.update_one(
-        {"_id": ObjectId(movie_id)},
-        {
-            "$set": {
-                "title": title,
-                "category": category,
-                "thumbnail": thumbnail,
-                "video_url": video_url,
-                "description": description,
-                "is_trending": is_trending,
-                "updated_at": utc_now(),
-            }
-        },
-    )
+    try:
+        movies_collection.update_one(
+            {"_id": ObjectId(movie_id)},
+            {
+                "$set": {
+                    "title": title,
+                    "category": category,
+                    "thumbnail": thumbnail,
+                    "video_url": video_url,
+                    "description": description,
+                    "is_trending": is_trending,
+                    "updated_at": utc_now(),
+                }
+            },
+        )
+    except Exception:
+        flash("Movie could not be updated. Check the database connection and try again.", "danger")
+        return redirect(url_for("admin_dashboard"))
+
     flash("Movie updated successfully.", "success")
     return redirect(url_for("admin_dashboard"))
 

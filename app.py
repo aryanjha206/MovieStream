@@ -170,10 +170,27 @@ def build_dashboard_sections(search_term="", selected_category=""):
 
     movie_docs = list(movies_collection.find(query).sort("created_at", -1))
     serialized = [serialize_movie(movie) for movie in movie_docs]
-    sections = {"Trending": [movie for movie in serialized if movie["is_trending"]]}
 
+    if search_term or selected_category:
+        # For search or specific category, return as a single section
+        label = f"Results for '{search_term}'" if search_term else selected_category
+        return {label: serialized}
+
+    sections = {}
+    # 1. Trending first
+    trending = [movie for movie in serialized if movie["is_trending"]]
+    if trending:
+        sections["Trending Now"] = trending
+
+    # 2. Categorized sections (only if they have movies)
     for category_name in get_category_names():
-        sections[category_name] = [movie for movie in serialized if movie["category"] == category_name]
+        category_movies = [movie for movie in serialized if movie["category"] == category_name]
+        if category_movies:
+            sections[category_name] = category_movies
+
+    # 3. Handle entirely empty state
+    if not sections and serialized:
+        sections["All Movies"] = serialized
 
     return sections
 

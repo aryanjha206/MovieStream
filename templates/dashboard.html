@@ -22,37 +22,47 @@
 </section>
 
 <section id="movieSections">
-    {% for section_name, movies in sections.items() %}
-        <div class="content-block">
-            <div class="section-heading">
-                <h2>{{ section_name }}</h2>
-                <p>{{ movies|length }} title{% if movies|length != 1 %}s{% endif %}</p>
+    {% if sections %}
+        {% for section_name, movies in sections.items() %}
+            <div class="content-block">
+                <div class="section-heading">
+                    <h2>{{ section_name }}</h2>
+                    <span class="count-badge">{{ movies|length }} title{% if movies|length != 1 %}s{% endif %}</span>
+                </div>
+                <div class="movie-row">
+                    {% for movie in movies %}
+                        <article
+                            class="movie-card interactive"
+                            data-title="{{ movie.title }}"
+                            data-category="{{ movie.category }}"
+                            data-description="{{ movie.description }}"
+                            data-embed="{{ movie.embed_url }}"
+                            data-video="{{ movie.video_url }}"
+                        >
+                            <img src="{{ movie.thumbnail }}" alt="{{ movie.title }}" onerror="this.src='https://placehold.co/600x400/08111f/f7f9fc?text=No+Thumbnail'">
+                            <div class="movie-overlay">
+                                <div class="movie-card-body">
+                                    <h3>{{ movie.title }}</h3>
+                                    <p>{{ movie.category }}</p>
+                                    <button type="button" class="button button-primary play-trigger">
+                                        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+                                        Watch now
+                                    </button>
+                                </div>
+                            </div>
+                        </article>
+                    {% endfor %}
+                </div>
             </div>
-            <div class="movie-row">
-                {% for movie in movies %}
-                    <article
-                        class="movie-card interactive"
-                        data-title="{{ movie.title }}"
-                        data-category="{{ movie.category }}"
-                        data-description="{{ movie.description }}"
-                        data-embed="{{ movie.embed_url }}"
-                        data-video="{{ movie.video_url }}"
-                    >
-                        <img src="{{ movie.thumbnail }}" alt="{{ movie.title }}">
-                        <div class="movie-card-body">
-                            <h3>{{ movie.title }}</h3>
-                            <p>{{ movie.category }}</p>
-                            <button type="button" class="button button-secondary play-trigger">Watch</button>
-                        </div>
-                    </article>
-                {% else %}
-                    <div class="empty-state slim">
-                        <p>No titles available in this section.</p>
-                    </div>
-                {% endfor %}
-            </div>
+        {% endfor %}
+    {% else %}
+        <div class="empty-state wide">
+            <div class="empty-icon">🎬</div>
+            <h2>No movies found</h2>
+            <p>We couldn't find any movies matching your selection. Try searching for something else or browse all categories.</p>
+            <a href="{{ url_for('dashboard') }}" class="button button-secondary">Browse all titles</a>
         </div>
-    {% endfor %}
+    {% endif %}
 </section>
 
 <div class="player-modal" id="playerModal">

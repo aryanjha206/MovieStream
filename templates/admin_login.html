@@ -4,14 +4,16 @@
 
 {% block content %}
 <section class="single-auth">
-    <div class="auth-panel">
-        <span class="eyebrow">Restricted</span>
-        <h1>Admin sign in</h1>
-        <p>Enter your PIN.</p>
-        <form method="post" action="{{ url_for('admin_login') }}" class="stack-form">
-            <label>Admin PIN</label>
-            <input type="password" name="pin" placeholder="Enter PIN" required>
-            <button type="submit" class="button button-primary">Continue</button>
+    <div class="auth-panel glass" style="max-width: 460px;">
+        <span class="eyebrow" style="color: var(--warning);">Security Checkpoint</span>
+        <h1>Admin Access</h1>
+        <p>Please enter your identification PIN to manage the catalog.</p>
+        <form method="post" action="{{ url_for('admin_login') }}" class="stack-form" style="margin-top: 24px;">
+            <div class="form-group">
+                <label>Verification PIN</label>
+                <input type="password" name="pin" placeholder="••••" required style="text-align: center; font-size: 24px; letter-spacing: 12px;">
+            </div>
+            <button type="submit" class="button button-primary" style="width: 100%;">Authorize Session</button>
         </form>
     </div>
 </section>

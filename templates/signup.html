@@ -4,17 +4,17 @@
 
 {% block content %}
 <section class="single-auth">
-    <div class="auth-panel auth-panel-wide auth-panel-highlight">
-        <span class="eyebrow">Create Account</span>
-        <h1>Set up your access</h1>
-        <p>Short, guided signup.</p>
+    <div class="auth-panel glass" style="max-width: 800px;">
+        <span class="eyebrow">Join the Community</span>
+        <h1>Create Your Access</h1>
+        <p>Follow the simple steps to start streaming.</p>
 
-        <div class="signup-progress">
-            <div class="signup-progress-bar">
+        <div class="signup-progress" style="margin: 32px 0;">
+            <div class="signup-progress-bar" style="height: 6px; background: rgba(255,255,255,0.05); border-radius: 3px; overflow: hidden;">
                 <span
-                    class="signup-progress-fill {% if email_verified %}verified{% endif %}"
+                    class="signup-progress-fill"
                     id="signupProgressFill"
-                    data-email-verified="{{ 'true' if email_verified else 'false' }}"
+                    style="height: 100%; background: var(--gradient-primary); display: block; transition: width 0.4s ease; width: {{ (current_step / 6 * 100)|int }}%;"
                 ></span>
             </div>
             <p id="signupStepLabel">Step by step setup</p>

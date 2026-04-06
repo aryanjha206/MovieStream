@@ -4,22 +4,26 @@
 
 {% block content %}
 <section class="single-auth">
-    <div class="auth-panel auth-panel-highlight">
-        <span class="eyebrow">Welcome Back</span>
-        <h1>Sign in</h1>
-        <p>Fast access to your library.</p>
+    <div class="auth-panel glass">
+        <span class="eyebrow">Welcome Back Member</span>
+        <h1>Sign in to Stream</h1>
+        <p>Instant access to your personalized catalog.</p>
         <form method="post" action="{{ url_for('login') }}" class="stack-form">
-            <label>Email Address</label>
-            <input type="email" name="email" placeholder="you@example.com" required>
-            <label>Password</label>
-            <input type="password" name="password" placeholder="Your password" required>
-            <label class="checkbox-row">
-                <input type="checkbox" name="accept_terms" required>
-                <span>I accept the Terms & Conditions and confirm that I am 18+.</span>
-            </label>
-            <button type="submit" class="button button-primary">Continue</button>
+            <div class="form-group">
+                <label>Email Address</label>
+                <input type="email" name="email" placeholder="e.g. aryan@example.com" required>
+            </div>
+            <div class="form-group">
+                <label>Password</label>
+                <input type="password" name="password" placeholder="••••••••" required>
+            </div>
+            <div class="checkbox-row">
+                <input type="checkbox" name="accept_terms" id="accept_terms" required>
+                <label for="accept_terms">I confirm that I am at least 18 years old and accept the Terms & Conditions.</label>
+            </div>
+            <button type="submit" class="button button-primary" style="width: 100%;">Sign In Now</button>
         </form>
-        <p class="muted-copy">New here? <a href="{{ url_for('signup') }}">Create account</a></p>
+        <p class="muted-copy" style="margin-top: 24px; text-align: center;">New to MovieStream? <a href="{{ url_for('signup') }}" style="color: var(--accent); font-weight: 700;">Join today</a></p>
     </div>
 </section>
 {% endblock %}

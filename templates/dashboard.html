@@ -4,21 +4,22 @@
 
 {% block content %}
 <section class="dashboard-hero">
-    <div>
-        <span class="eyebrow">Dashboard</span>
+    <div class="hero-content">
+        <span class="eyebrow" style="color: var(--mx-accent); text-transform: uppercase; font-size: 14px; font-weight: 800; letter-spacing: 2px;">Featured Now</span>
         <h1>Welcome, {{ current_user_name }}</h1>
-        <p>Search, browse, and play instantly.</p>
+        <p style="color: var(--mx-text-dim); font-size: 18px; margin-bottom: 32px;">Discover and stream your favorite movies in high quality.</p>
+        
+        <form class="toolbar" method="get" action="{{ url_for('dashboard') }}">
+            <input type="search" name="q" placeholder="Search for movies, actors, genres..." value="{{ search_term }}">
+            <select name="category">
+                <option value="">All Categories</option>
+                {% for category in categories %}
+                    <option value="{{ category }}" {% if category == selected_category %}selected{% endif %}>{{ category }}</option>
+                {% endfor %}
+            </select>
+            <button type="submit" class="button-apply">Find Movies</button>
+        </form>
     </div>
-    <form class="toolbar" method="get" action="{{ url_for('dashboard') }}">
-        <input type="search" name="q" placeholder="Search movies..." value="{{ search_term }}">
-        <select name="category">
-            <option value="">All categories</option>
-            {% for category in categories %}
-                <option value="{{ category }}" {% if category == selected_category %}selected{% endif %}>{{ category }}</option>
-            {% endfor %}
-        </select>
-        <button type="submit" class="button button-primary">Apply</button>
-    </form>
 </section>
 
 <section id="movieSections">
@@ -39,15 +40,11 @@
                             data-embed="{{ movie.embed_url }}"
                             data-video="{{ movie.video_url }}"
                         >
-                            <img src="{{ movie.thumbnail }}" alt="{{ movie.title }}" onerror="this.src='https://placehold.co/600x400/08111f/f7f9fc?text=No+Thumbnail'">
+                            <img src="{{ movie.thumbnail }}" alt="{{ movie.title }}" onerror="this.src='https://placehold.co/600x900/13243a/ffffff?text={{ movie.title|urlencode }}'">
                             <div class="movie-overlay">
                                 <div class="movie-card-body">
                                     <h3>{{ movie.title }}</h3>
                                     <p>{{ movie.category }}</p>
-                                    <button type="button" class="button button-primary play-trigger">
-                                        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
-                                        Watch now
-                                    </button>
                                 </div>
                             </div>
                         </article>
@@ -56,22 +53,24 @@
             </div>
         {% endfor %}
     {% else %}
-        <div class="empty-state wide">
-            <div class="empty-icon">🎬</div>
-            <h2>No movies found</h2>
-            <p>We couldn't find any movies matching your selection. Try searching for something else or browse all categories.</p>
-            <a href="{{ url_for('dashboard') }}" class="button button-secondary">Browse all titles</a>
+        <div class="empty-state wide" style="text-align: center; padding: 100px 0;">
+            <div class="empty-icon" style="font-size: 64px; margin-bottom: 24px;">🎬</div>
+            <h2 style="font-size: 32px; margin-bottom: 12px;">No results found</h2>
+            <p style="color: var(--mx-text-dim); margin-bottom: 32px;">Try adjusting your search terms or filters.</p>
+            <a href="{{ url_for('dashboard') }}" class="button-apply" style="text-decoration: none; display: inline-block;">Browse All Titles</a>
         </div>
     {% endif %}
 </section>
 
 <div class="player-modal" id="playerModal">
-    <div class="player-panel">
-        <button type="button" class="close-player" id="closePlayer" aria-label="Close player">Close</button>
+    <div class="player-header">
         <div class="player-copy">
-            <h2 id="playerTitle">Now Playing</h2>
-            <p id="playerMeta"></p>
+            <h2 id="playerTitle" style="color: white; font-size: 20px;">Now Playing</h2>
+            <p id="playerMeta" style="color: #cbd5e1; font-size: 14px;"></p>
         </div>
+        <button type="button" class="close-player" id="closePlayer" aria-label="Close player">×</button>
+    </div>
+    <div class="player-panel">
         <div class="player-frame">
             <iframe id="movieFrame" src="" title="Movie player" allowfullscreen></iframe>
             <video id="movieVideo" controls hidden></video>

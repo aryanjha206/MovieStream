@@ -39,8 +39,8 @@ function closePlayerModal() {
     video.removeAttribute("src");
 }
 
-document.querySelectorAll(".play-trigger").forEach((button) => {
-    button.addEventListener("click", () => openPlayer(button.closest(".movie-card")));
+document.querySelectorAll(".movie-card").forEach((card) => {
+    card.addEventListener("click", () => openPlayer(card));
 });
 
 if (closePlayer) {

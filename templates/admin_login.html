@@ -3,17 +3,15 @@
 {% block title %}MovieStream | Admin{% endblock %}
 
 {% block content %}
-<section class="single-auth">
-    <div class="auth-panel glass" style="max-width: 460px;">
-        <span class="eyebrow" style="color: var(--warning);">Security Checkpoint</span>
-        <h1>Admin Access</h1>
-        <p>Please enter your identification PIN to manage the catalog.</p>
-        <form method="post" action="{{ url_for('admin_login') }}" class="stack-form" style="margin-top: 24px;">
+<section class="single-auth" style="display: flex; justify-content: center; align-items: center; min-height: 80vh;">
+    <div class="auth-panel" style="width: 100%; max-width: 400px; padding: 40px; background: var(--mx-bg-alt); border-radius: var(--radius-lg);">
+        <h1 style="font-size: 28px; margin-bottom: 8px;">Admin Login</h1>
+        <p style="color: var(--mx-text-dim); margin-bottom: 32px;">Please enter your identification PIN.</p>
+        <form method="post" action="{{ url_for('admin_login') }}" class="stack-form">
             <div class="form-group">
-                <label>Verification PIN</label>
-                <input type="password" name="pin" placeholder="••••" required style="text-align: center; font-size: 24px; letter-spacing: 12px;">
+                <input type="password" name="pin" placeholder="Enter PIN" required style="text-align: center; font-size: 24px; letter-spacing: 12px;">
             </div>
-            <button type="submit" class="button button-primary" style="width: 100%;">Authorize Session</button>
+            <button type="submit" class="button-primary">Authorize</button>
         </form>
     </div>
 </section>

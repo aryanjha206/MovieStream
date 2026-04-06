@@ -3,33 +3,33 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="theme-color" content="#03070e">
-    <meta name="description" content="MovieStream - Your premium movie catalog and high-performance streaming dashboard. Watch anywhere, anytime.">
+    <meta name="theme-color" content="#0b1626">
+    <meta name="description" content="MovieStream - Premium video streaming inspired by MX Player.">
     <link rel="manifest" href="{{ url_for('static', filename='manifest.webmanifest') }}">
     <link rel="icon" href="{{ url_for('static', filename='icons/favicon.svg') }}" type="image/svg+xml">
     <link rel="apple-touch-icon" href="{{ url_for('static', filename='icons/icon-192.png') }}">
     <title>{% block title %}MovieStream{% endblock %}</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 <body class="{% block body_class %}{% endblock %}">
     <div class="app-shell">
         <header class="site-header">
             <a href="{{ url_for('home') }}" class="brand">
-                <div class="brand-mark">M</div>
+                <div class="brand-mark">MX</div>
                 <span>MovieStream</span>
             </a>
             <nav class="nav-links">
                 {% if is_admin %}
-                    <a href="{{ url_for('admin_dashboard') }}" class="nav-btn">Admin Panel</a>
-                    <a href="{{ url_for('admin_logout') }}" class="nav-btn btn-danger">Exit Admin</a>
+                    <a href="{{ url_for('admin_dashboard') }}" class="nav-btn">Manage</a>
+                    <a href="{{ url_for('admin_logout') }}" class="nav-btn btn-danger">Exit</a>
                 {% elif is_logged_in %}
-                    <a href="{{ url_for('dashboard') }}" class="nav-btn">Library</a>
-                    <a href="{{ url_for('logout') }}" class="nav-btn">Sign Out</a>
+                    <a href="{{ url_for('dashboard') }}" class="nav-btn active">Home</a>
+                    <a href="{{ url_for('logout') }}" class="nav-btn">Logout</a>
                 {% else %}
-                    <a href="{{ url_for('login') }}" class="nav-btn">Login</a>
+                    <a href="{{ url_for('login') }}" class="nav-btn">Sign In</a>
                     <a href="{{ url_for('signup') }}" class="nav-btn btn-primary">Join Free</a>
                 {% endif %}
             </nav>

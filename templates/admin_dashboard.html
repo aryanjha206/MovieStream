@@ -11,16 +11,14 @@
     </div>
 </section>
 
-<section class="admin-grid">
-    <div class="admin-card glass">
-        <h2 id="movieFormTitle" class="section-title">Add New Movie</h2>
+<section class="admin-grid" style="display: grid; grid-template-columns: 1.2fr 0.8fr; gap: 32px;">
+    <div class="admin-card">
+        <h2 id="movieFormTitle" style="margin-bottom: 24px; font-size: 20px;">Upload Content</h2>
         <form method="post" action="{{ url_for('add_movie') }}" class="stack-form" id="movieForm">
             <div class="form-group">
-                <label>Title</label>
-                <input type="text" name="title" id="movieTitle" placeholder="e.g. Inception" required>
+                <input type="text" name="title" id="movieTitle" placeholder="Video Title (e.g. Action Movie 2024)" required>
             </div>
             <div class="form-group">
-                <label>Category</label>
                 <select name="category" id="movieCategory" required>
                     {% for category in categories %}
                         <option value="{{ category.name }}">{{ category.name }}</option>
@@ -29,42 +27,37 @@
                 </select>
             </div>
             <div class="form-group">
-                <label>Thumbnail URL</label>
-                <input type="text" name="thumbnail" id="movieThumbnail" placeholder="https://image.tmdb.org/t/p/w500/..." required>
+                <input type="text" name="thumbnail" id="movieThumbnail" placeholder="Thumbnail Image URL" required>
             </div>
             <div class="form-group">
-                <label>Video URL / Embed Link</label>
-                <input type="text" name="video_url" id="movieVideoUrl" placeholder="https://youtube.com/watch?v=..." required>
+                <input type="text" name="video_url" id="movieVideoUrl" placeholder="Direct Video URL or Embed Link" required>
             </div>
             <div class="form-group">
-                <label>Description</label>
-                <textarea name="description" id="movieDescription" rows="3" placeholder="Brief story overview..."></textarea>
+                <textarea name="description" id="movieDescription" rows="3" placeholder="Write a short summary..."></textarea>
             </div>
-            <div class="checkbox-row">
-                <input type="checkbox" name="is_trending" id="movieTrending">
-                <span>Featured / Trending Now</span>
+            <div style="margin-bottom: 24px; display: flex; align-items: center; gap: 10px;">
+                <input type="checkbox" name="is_trending" id="movieTrending" style="width: 18px; height: 18px; margin-bottom: 0;">
+                <label for="movieTrending" style="font-size: 14px; font-weight: 600;">Feature on Home Page</label>
             </div>
-            <div class="inline-actions">
-                <button type="submit" class="button button-primary" id="movieSubmitButton">Save to Catalog</button>
-                <button type="button" class="button button-secondary" id="resetMovieForm">Clear Form</button>
+            <div class="inline-actions" style="display: flex; gap: 12px;">
+                <button type="submit" class="button-primary" id="movieSubmitButton">Save Entry</button>
+                <button type="button" class="nav-btn" id="resetMovieForm" style="background: rgba(255,255,255,0.05); padding: 10px 20px; border-radius: 8px;">Clear</button>
             </div>
         </form>
     </div>
 
-    <div class="admin-card glass">
-        <h2 class="section-title">Categories</h2>
-        <form method="post" action="{{ url_for('add_category') }}" class="stack-form">
-            <div class="form-row">
-                <input type="text" name="name" placeholder="Sci-Fi" required>
-                <button type="submit" class="button button-secondary">Add</button>
-            </div>
+    <div class="admin-card">
+        <h2 style="margin-bottom: 24px; font-size: 20px;">Manage Categories</h2>
+        <form method="post" action="{{ url_for('add_category') }}" class="stack-form" style="display: flex; gap: 8px; margin-bottom: 24px;">
+            <input type="text" name="name" placeholder="Genre Name" required style="margin-bottom: 0; flex: 1;">
+            <button type="submit" class="button-primary" style="width: auto;">Add</button>
         </form>
-        <div class="chips-wrap">
+        <div class="chips-wrap" style="display: flex; flex-wrap: wrap; gap: 10px;">
             {% for category in categories %}
-                <div class="category-chip">
-                    <span>{{ category.name }}</span>
-                    <form method="post" action="{{ url_for('delete_category', category_id=category._id) }}" class="no-gap">
-                        <button type="submit" class="delete-btn" aria-label="Delete category">×</button>
+                <div class="category-chip" style="background: rgba(255,255,255,0.05); padding: 6px 12px; border-radius: 6px; display: flex; align-items: center; gap: 8px; border: 1px solid var(--mx-border);">
+                    <span style="font-size: 13px;">{{ category.name }}</span>
+                    <form method="post" action="{{ url_for('delete_category', category_id=category._id) }}" style="display: contents;">
+                        <button type="submit" style="background: transparent; border: none; color: #ef4444; font-weight: bold; cursor: pointer;">×</button>
                     </form>
                 </div>
             {% endfor %}
@@ -73,52 +66,47 @@
 </section>
 
 <section class="content-block">
-    <div class="section-heading">
-        <h2>Existing Titles</h2>
-        <span class="count-badge">{{ movies|length }} titles in catalog</span>
+    <div class="header-with-action" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
+        <h2 style="font-size: 20px;">Library Catalog</h2>
+        <span style="background: var(--mx-accent); padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 700;">{{ movies|length }} Items</span>
     </div>
     
     {% if movies %}
-        <div class="admin-movie-list">
+        <div class="movie-row">
             {% for movie in movies %}
-                <article class="admin-movie-card">
-                    <img src="{{ movie.thumbnail }}" alt="{{ movie.title }}" onerror="this.src='https://placehold.co/300x170/08111f/f7f9fc?text=No+Thumbnail'">
-                    <div class="admin-movie-content">
-                        <div class="admin-movie-header">
-                            <h3>{{ movie.title }}</h3>
-                            <span class="category-tag">{{ movie.category }}</span>
-                        </div>
-                        <p class="description">{{ (movie.description or 'No synopsis provided.')|truncate(120) }}</p>
-                        <div class="movie-meta-info">
-                            {% if movie.is_trending %}<span class="trending-badge">★ Trending</span>{% endif %}
-                        </div>
-                        <div class="admin-actions">
-                            <button
-                                type="button"
-                                class="button button-secondary edit-movie-trigger"
-                                data-id="{{ movie.id }}"
-                                data-title="{{ movie.title }}"
-                                data-category="{{ movie.category }}"
-                                data-thumbnail="{{ movie.thumbnail }}"
-                                data-video="{{ movie.video_url }}"
-                                data-description="{{ movie.description }}"
-                                data-trending="{{ 'true' if movie.is_trending else 'false' }}"
-                            >
-                                Edit Details
-                            </button>
-                            <form method="post" action="{{ url_for('delete_movie', movie_id=movie.id) }}" class="inline-form" onsubmit="return confirm('Archive this title?')">
-                                <button type="submit" class="button button-ghost">Delete</button>
-                            </form>
+                <article class="movie-card" style="aspect-ratio: auto; height: 100%;">
+                    <img src="{{ movie.thumbnail }}" alt="{{ movie.title }}" onerror="this.src='https://placehold.co/600x900/13243a/ffffff?text={{ movie.title|urlencode }}'">
+                    <div class="movie-overlay" style="background: linear-gradient(0deg, rgba(0,0,0,0.9) 0%, transparent 100%);">
+                        <div class="movie-card-body">
+                            <h3 style="font-size: 14px; margin-bottom: 2px;">{{ movie.title }}</h3>
+                            <p style="font-size: 11px; margin-bottom: 12px;">{{ movie.category }}</p>
+                            <div class="admin-actions" style="display: flex; gap: 8px;">
+                                <button
+                                    type="button"
+                                    class="nav-btn edit-movie-trigger"
+                                    style="background: white; color: black; padding: 4px 10px; border-radius: 4px; font-size: 11px; flex: 1;"
+                                    data-id="{{ movie.id }}"
+                                    data-title="{{ movie.title }}"
+                                    data-category="{{ movie.category }}"
+                                    data-thumbnail="{{ movie.thumbnail }}"
+                                    data-video="{{ movie.video_url }}"
+                                    data-description="{{ movie.description }}"
+                                    data-trending="{{ 'true' if movie.is_trending else 'false' }}"
+                                >
+                                    Edit
+                                </button>
+                                <form method="post" action="{{ url_for('delete_movie', movie_id=movie.id) }}" style="flex: 1;" onsubmit="return confirm('Permanently remove this title?')">
+                                    <button type="submit" class="nav-btn" style="background: #ef4444; color: white; padding: 4px 10px; border-radius: 4px; font-size: 11px; width: 100%; border: none;">Remove</button>
+                                </form>
+                            </div>
                         </div>
                     </div>
                 </article>
             {% endfor %}
         </div>
     {% else %}
-        <div class="empty-state">
-            <div class="empty-icon">📂</div>
-            <h3>Catalog is empty</h3>
-            <p>Start by adding your first movie using the form above.</p>
+        <div class="empty-state" style="padding: 60px; text-align: center; background: rgba(255,255,255,0.02); border-radius: 12px; border: 1px dashed var(--mx-border);">
+            <p style="color: var(--mx-text-dim);">Your catalog is empty. Upload your first video above.</p>
         </div>
     {% endif %}
 </section>

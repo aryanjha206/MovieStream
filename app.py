@@ -601,7 +601,14 @@ def admin_logout():
     return redirect(url_for("admin_login"))
 
 
-bootstrap_database()
+# Instead of calling it at the top level, we allow the app worker to start first.
+# Vercel imports 'app' and will execute the code.
+# Let's ensure indices independently if needed or call it here but wrap it.
+
+try:
+    bootstrap_database()
+except Exception as e:
+    print(f"Warning: Primary database bootstrap failed: {e}. If this is a cold start, it's normal.")
 
 
 if __name__ == "__main__":

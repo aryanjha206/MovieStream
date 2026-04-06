@@ -376,12 +376,110 @@ body {
     box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1);
 }
 
-/* Responsive */
+/* Mobile Bottom Navigation */
+.mobile-nav {
+    display: none;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: rgba(11, 22, 38, 0.95);
+    backdrop-filter: blur(20px);
+    border-top: 1px solid var(--mx-border);
+    padding: 12px 0;
+    z-index: 1000;
+    justify-content: space-around;
+    align-items: center;
+}
+
+.mobile-nav-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    text-decoration: none;
+    color: var(--mx-text-dim);
+    font-size: 11px;
+    font-weight: 600;
+}
+
+.mobile-nav-item.active {
+    color: var(--mx-accent);
+}
+
+.mobile-nav-icon {
+    font-size: 20px;
+}
+
+/* Responsive Overrides */
 @media (max-width: 768px) {
-    .app-shell { padding: 0 20px 40px; }
-    .dashboard-hero { padding: 40px 20px; min-height: 300px; }
-    .hero-content h1 { font-size: 32px; }
-    .toolbar { flex-direction: column; width: 100%; border-radius: 12px; }
-    .toolbar input { min-width: 0; }
-    .movie-row { grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); }
+    .app-shell { 
+        padding: 0 16px 100px;
+    }
+    
+    .site-header {
+        padding: 12px 0;
+        margin-bottom: 24px;
+    }
+    
+    .brand { font-size: 18px; }
+    .nav-links { display: none; } /* Hide top links on mobile */
+    .mobile-nav { display: flex; }
+    
+    .dashboard-hero {
+        padding: 40px 24px;
+        min-height: 260px;
+        margin-bottom: 32px;
+    }
+    
+    .hero-content h1 { font-size: 28px; }
+    .hero-content p { font-size: 14px; margin-bottom: 24px; }
+    
+    .toolbar {
+        flex-direction: column;
+        background: rgba(255, 255, 255, 0.08);
+        border-radius: 12px;
+        padding: 12px;
+        width: 100%;
+        gap: 8px;
+    }
+    
+    .toolbar input { 
+        min-width: 0; 
+        padding: 8px 12px;
+        border-bottom: 1px solid var(--mx-border);
+    }
+    
+    .toolbar select {
+        border-left: none;
+        padding: 8px 12px;
+    }
+    
+    .button-apply {
+        width: 100%;
+        padding: 12px;
+    }
+    
+    .movie-row {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
+    }
+    
+    .movie-card img {
+        border-radius: var(--radius-md);
+    }
+    
+    .movie-card-body h3 { font-size: 14px; }
+    .movie-card-body p { font-size: 11px; }
+
+    .player-header {
+        padding: 16px 20px;
+    }
+    
+    .player-copy h2 { font-size: 16px; }
+}
+
+@keyframes fadeInStep {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
 }

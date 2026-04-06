@@ -28,9 +28,6 @@
                 {% elif is_logged_in %}
                     <a href="{{ url_for('dashboard') }}" class="nav-btn active">Home</a>
                     <a href="{{ url_for('logout') }}" class="nav-btn">Logout</a>
-                {% else %}
-                    <a href="{{ url_for('signup') }}" class="nav-btn btn-primary">Join Free</a>
-                    <a href="{{ url_for('login') }}" class="nav-btn" style="font-size: 13px; color: var(--mx-text-dim); border: 1px solid var(--mx-border); padding: 6px 14px; border-radius: 8px;">Login</a>
                 {% endif %}
             </nav>
         </header>
@@ -47,6 +44,8 @@
             {% endwith %}
             {% block content %}{% endblock %}
         </main>
+        
+        {% if is_logged_in or is_admin %}
         <nav class="mobile-nav">
             <a href="{{ url_for('dashboard') }}" class="mobile-nav-item active">
                 <span class="mobile-nav-icon">🏠</span>
@@ -61,18 +60,14 @@
                     <span class="mobile-nav-icon">⚙️</span>
                     <span>Admin</span>
                 </a>
-            {% elif is_logged_in %}
+            {% else %}
                 <a href="{{ url_for('logout') }}" class="mobile-nav-item">
                     <span class="mobile-nav-icon">👤</span>
                     <span>Logout</span>
                 </a>
-            {% else %}
-                <a href="{{ url_for('login') }}" class="mobile-nav-item">
-                    <span class="mobile-nav-icon">🔑</span>
-                    <span>Login</span>
-                </a>
             {% endif %}
         </nav>
+        {% endif %}
     </div>
     <script src="{{ url_for('static', filename='js/pwa.js') }}"></script>
     {% block scripts %}{% endblock %}

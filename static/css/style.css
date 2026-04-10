@@ -80,7 +80,8 @@ body {
 
 /* Auth Page overrides */
 .auth-page .app-sidebar,
-.auth-page .app-header {
+.auth-page .app-header,
+.auth-page .mobile-tabs {
     display: none !important;
 }
 

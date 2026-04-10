@@ -4,39 +4,53 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="theme-color" content="#030712">
-    <meta name="description" content="MovieStream Elite - Premium 4K Cinematic Experience. Built for the modern viewer.">
+    <meta name="description" content="MovieStream Elite - Premium 4K Cinematic Experience redefined for the ultimate viewer.">
     
-    <!-- PWA & Mobile Icons -->
     <link rel="manifest" href="{{ url_for('static', filename='manifest.webmanifest') }}">
     <link rel="icon" href="{{ url_for('static', filename='icons/favicon.svg') }}" type="image/svg+xml">
     <link rel="apple-touch-icon" href="{{ url_for('static', filename='icons/icon-192.png') }}">
     
     <title>{% block title %}MovieStream Elite{% endblock %}</title>
     
-    <!-- Typography -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@700;800&display=swap" rel="stylesheet">
     
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    
+    <style>
+        /* Extra dynamic glow effects */
+        .glow-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            background: radial-gradient(circle at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(59, 130, 246, 0.03) 0%, transparent 60%);
+            z-index: 9999;
+        }
+    </style>
 </head>
 <body class="{% block body_class %}{% endblock %}">
+    <div class="glow-overlay" id="glowOverlay"></div>
+    
     <div class="app-shell">
         <header class="site-header">
             <a href="{{ url_for('home') }}" class="brand">
-                <div class="brand-mark">MS</div>
-                <span>MovieStream<span style="color: var(--mx-accent);">Elite</span></span>
+                <div class="brand-mark">ME</div>
+                <span style="font-family: 'Plus Jakarta Sans', sans-serif;">MovieStream<span style="color: var(--mx-accent);">Elite</span></span>
             </a>
             <nav class="nav-links">
                 {% if is_admin %}
-                    <a href="{{ url_for('admin_dashboard') }}" class="nav-btn {% if request.endpoint == 'admin_dashboard' %}active{% endif %}">Library</a>
-                    <a href="{{ url_for('admin_logout') }}" class="nav-btn" style="color: #ef4444;">Exit Admin</a>
+                    <a href="{{ url_for('admin_dashboard') }}" class="nav-btn {% if request.endpoint == 'admin_dashboard' %}active{% endif %}">Catalog</a>
+                    <a href="{{ url_for('admin_logout') }}" class="nav-btn" style="color: #ef4444;">Logout Admin</a>
                 {% elif is_logged_in %}
-                    <a href="{{ url_for('dashboard') }}" class="nav-btn {% if request.endpoint == 'dashboard' %}active{% endif %}">Explore</a>
+                    <a href="{{ url_for('dashboard') }}" class="nav-btn {% if request.endpoint == 'dashboard' %}active{% endif %}">Home</a>
                     <a href="{{ url_for('logout') }}" class="nav-btn">Sign Out</a>
                 {% else %}
-                    <a href="{{ url_for('login') }}" class="nav-btn {% if request.endpoint == 'login' %}active{% endif %}">Sign In</a>
-                    <a href="{{ url_for('signup') }}" class="nav-btn btn-primary" style="background: var(--gradient-primary); color: white; padding: 10px 24px; border-radius: 999px;">Join Free</a>
+                    <a href="{{ url_for('login') }}" class="nav-btn">Sign In</a>
+                    <a href="{{ url_for('signup') }}" class="nav-btn btn-primary">Join Free</a>
                 {% endif %}
             </nav>
         </header>
@@ -51,19 +65,23 @@
             {% endif %}
         {% endwith %}
 
-        <main id="mainContent">
+        <main id="mainContent" style="min-height: 70vh;">
             {% block content %}{% endblock %}
         </main>
         
-        {% if is_logged_in or is_admin %}
+        <footer style="margin-top: 100px; padding: 40px 0; border-top: 1px solid var(--mx-border); text-align: center;">
+            <p style="color: var(--mx-text-muted); font-size: 14px;">&copy; {{ current_year }} MovieStream Elite. Powered by advanced cinematic tech.</p>
+        </footer>
+
+        {% if is_logged_in or is_admin or request.endpoint == 'login' %}
         <nav class="mobile-nav">
             <a href="{{ url_for('dashboard') }}" class="mobile-nav-item {% if request.endpoint == 'dashboard' %}active{% endif %}">
                 <span class="mobile-nav-icon">🏠</span>
                 <span>Home</span>
             </a>
             <a href="{{ url_for('dashboard') }}#movieSections" class="mobile-nav-item">
-                <span class="mobile-nav-icon">🔍</span>
-                <span>Discover</span>
+                <span class="mobile-nav-icon">🛰️</span>
+                <span>Explore</span>
             </a>
             {% if is_admin %}
                 <a href="{{ url_for('admin_dashboard') }}" class="mobile-nav-item {% if request.endpoint == 'admin_dashboard' %}active{% endif %}">
@@ -73,26 +91,36 @@
             {% else %}
                 <a href="{{ url_for('logout') }}" class="mobile-nav-item">
                     <span class="mobile-nav-icon">👤</span>
-                    <span>Logout</span>
+                    <span>Exit</span>
                 </a>
             {% endif %}
         </nav>
         {% endif %}
     </div>
 
-    <!-- PWA Helper -->
     <script src="{{ url_for('static', filename='js/pwa.js') }}"></script>
     
-    <!-- Auto-hide Flash Messages -->
     <script>
+        // Interactive glow effect
+        document.addEventListener('mousemove', (e) => {
+            const overlay = document.getElementById('glowOverlay');
+            if (overlay) {
+                const x = (e.clientX / window.innerWidth) * 100;
+                const y = (e.clientY / window.innerHeight) * 100;
+                overlay.style.setProperty('--mouse-x', `${x}%`);
+                overlay.style.setProperty('--mouse-y', `${y}%`);
+            }
+        });
+
+        // Flash manager
         document.addEventListener('DOMContentLoaded', () => {
             const flashes = document.querySelectorAll('.flash');
             flashes.forEach(f => {
                 setTimeout(() => {
                     f.style.opacity = '0';
-                    f.style.transform = 'translateX(20px)';
-                    f.style.transition = 'all 0.5s ease';
-                    setTimeout(() => f.remove(), 500);
+                    f.style.transform = 'translateY(-20px)';
+                    f.style.transition = 'all 0.6s cubic-bezier(0.4, 0, 0.2, 1)';
+                    setTimeout(() => f.remove(), 600);
                 }, 4000);
             });
         });

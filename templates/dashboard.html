@@ -1,26 +1,23 @@
 {% extends "base.html" %}
 
-{% block title %}Dashboard | MovieStream Premium{% endblock %}
+{% block title %}Dashboard | MovieStream Elite{% endblock %}
 
 {% block content %}
 <section class="dashboard-hero">
     <div class="hero-content">
-        <span class="eyebrow">Premium Access</span>
-        <h1>Universal Streaming <br>Redefined for You</h1>
-        <p style="color: var(--mx-text-dim); font-size: 18px; margin: 16px 0 32px; max-width: 480px;">
-            Enjoy {{ episodes_count if episodes_count else 'exclusive' }} titles in 4K resolution. 
-            Hello, {{ current_user_name }} – what are we watching today?
-        </p>
+        <span class="eyebrow" style="background: rgba(59, 130, 246, 0.1); color: var(--mx-accent); border: 1px solid var(--mx-accent); padding: 4px 12px; border-radius: 999px; font-size: 11px; font-weight: 800; text-transform: uppercase;">Cinematic Experience</span>
+        <h1>Cinema at Your <br>Command</h1>
+        <p>Welcome back, <strong>{{ current_user_name }}</strong>. Your personal theater is ready for streaming in 4K.</p>
         
         <form class="toolbar" method="get" action="{{ url_for('dashboard') }}">
-            <input type="search" name="q" placeholder="Search titles, genres, actors..." value="{{ search_term }}">
+            <input type="search" name="q" placeholder="Discovery search..." value="{{ search_term }}">
             <select name="category">
-                <option value="">All Library</option>
+                <option value="">All Categories</option>
                 {% for category in categories %}
                     <option value="{{ category }}" {% if category == selected_category %}selected{% endif %}>{{ category }}</option>
                 {% endfor %}
             </select>
-            <button type="submit" class="button-apply">Search</button>
+            <button type="submit" class="button-apply">Find Movies</button>
         </form>
     </div>
 </section>
@@ -30,12 +27,8 @@
         {% for section_name, movies in sections.items() %}
             <div class="content-block">
                 <div class="section-heading">
-                    <div style="display: flex; align-items: baseline; gap: 16px;">
-                        <h2>{{ section_name }}</h2>
-                        <span style="color: var(--mx-accent); font-weight: 800; font-size: 13px; text-transform: uppercase; letter-spacing: 1px;">
-                            {{ movies|length }} titles
-                        </span>
-                    </div>
+                    <h2 style="font-family: 'Plus Jakarta Sans', sans-serif;">{{ section_name }}</h2>
+                    <span style="color: var(--mx-accent); font-weight: 800; font-size: 13px;">{{ movies|length }} titles available</span>
                 </div>
                 <div class="movie-row">
                     {% for movie in movies %}
@@ -60,27 +53,27 @@
             </div>
         {% endfor %}
     {% else %}
-        <div class="empty-state wide" style="text-align: center; padding: 120px 0; background: var(--glass); border-radius: var(--radius-xl); border: 1px dashed var(--mx-border);">
-            <div style="font-size: 80px; margin-bottom: 32px; filter: grayscale(1); opacity: 0.5;">📼</div>
-            <h2 style="font-size: 32px; margin-bottom: 12px; font-weight: 800;">No titles found</h2>
-            <p style="color: var(--mx-text-dim); margin-bottom: 40px; font-size: 18px;">We couldn't find any matches for your current selection.</p>
-            <a href="{{ url_for('dashboard') }}" class="button-apply" style="text-decoration: none; display: inline-block;">Clear All Filters</a>
+        <div class="empty-state wide" style="text-align: center; padding: 120px 0; background: var(--mx-glass-light); border-radius: var(--radius-xl); border: 1px dashed var(--mx-border);">
+            <div style="font-size: 64px; margin-bottom: 24px;">📽️</div>
+            <h2 style="font-size: 32px; margin-bottom: 12px;">The library is currently empty</h2>
+            <p style="color: var(--mx-text-dim); margin-bottom: 40px;">No matches found. Try exploring other categories or check back later.</p>
+            <a href="{{ url_for('dashboard') }}" class="button-apply" style="text-decoration: none; display: inline-block;">Reset Exploration</a>
         </div>
     {% endif %}
 </div>
 
-<!-- Premium Video Player Overlay -->
+<!-- Premium Player Modal -->
 <div class="player-modal" id="playerModal">
     <div class="player-header">
         <div class="player-copy">
-            <h2 id="playerTitle" style="color: white; font-size: 24px; font-weight: 800; margin-bottom: 4px;">Loading Title...</h2>
-            <p id="playerMeta" style="color: var(--mx-accent); font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px;"></p>
+            <h2 id="playerTitle" style="color: white; font-size: 24px; font-weight: 800;">Loading Cinematic Content...</h2>
+            <p id="playerMeta" style="color: var(--mx-accent); font-size: 13px; font-weight: 700; text-transform: uppercase;"></p>
         </div>
-        <button type="button" class="close-player" id="closePlayer" aria-label="Exit theater mode">×</button>
+        <button type="button" class="close-player" id="closePlayer" aria-label="Exit Theater">×</button>
     </div>
     <div class="player-panel">
         <div class="player-frame">
-            <iframe id="movieFrame" src="" title="Video Theater" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen hidden></iframe>
+            <iframe id="movieFrame" src="" title="Movie Stream Elite Player" allow="autoplay; fullscreen" allowfullscreen hidden></iframe>
             <video id="movieVideo" controls playsinline hidden></video>
         </div>
     </div>

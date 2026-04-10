@@ -142,11 +142,11 @@ def serialize_movie(movie):
 
 def send_otp_email(recipient_email, otp_code):
     message = Message(
-        subject="Your MovieStream verification code",
+        subject="Your MovieStream Elite verification code",
         recipients=[recipient_email],
     )
     message.body = (
-        "Welcome to MovieStream.\n\n"
+        "Welcome to MovieStream Elite.\n\n"
         f"Your one-time password is: {otp_code}\n"
         f"This code expires in {OTP_EXPIRY_MINUTES} minutes."
     )
@@ -430,7 +430,7 @@ def login():
 @app.route("/logout")
 def logout():
     session.clear()
-    flash("You have been logged out.", "info")
+    flash("You have been successfully signed out.", "info")
     return redirect(url_for("login"))
 
 

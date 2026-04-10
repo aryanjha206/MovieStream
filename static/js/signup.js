@@ -5,12 +5,12 @@ const stepLabel = document.getElementById("signupStepLabel");
 
 if (signupWizard) {
     const stepTitles = {
-        1: "Verify Email",
-        2: "Verification OTP",
-        3: "Your Profile",
+        1: "Email Verification",
+        2: "Identity Authentication",
+        3: "Profile Creation",
         4: "Age Verification",
         5: "Security Setup",
-        6: "Final Agreement",
+        6: "Access Agreement",
     };
 
     const emailVerified = signupWizard.dataset.emailVerified === "true";
@@ -23,19 +23,19 @@ if (signupWizard) {
         allSteps.forEach((step) => {
             const stepNum = Number(step.dataset.step);
             step.classList.toggle("active", stepNum === stepNumber);
-            
-            // Add animation classes
-            if (stepNum === stepNumber) {
-                step.style.animation = "slideUp 0.6s cubic-bezier(0.4, 0, 0.2, 1) forwards";
-            }
         });
 
         if (progressFill) {
             progressFill.style.width = `${(stepNumber / 6) * 100}%`;
         }
 
+        const stepNumDisplay = document.getElementById("currentStepNum");
+        if (stepNumDisplay) {
+            stepNumDisplay.textContent = stepNumber;
+        }
+
         if (stepLabel) {
-            stepLabel.textContent = `Step ${stepNumber} of 6: ${stepTitles[stepNumber]}`;
+            stepLabel.textContent = stepTitles[stepNumber];
         }
     }
 

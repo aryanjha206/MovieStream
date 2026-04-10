@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <meta name="theme-color" content="#030712">
+    <meta name="theme-color" content="#020617">
     <meta name="description" content="MovieStream Elite - Premium 4K Cinematic Experience redefined for the ultimate viewer.">
     
     <link rel="manifest" href="{{ url_for('static', filename='manifest.webmanifest') }}">
@@ -14,40 +14,41 @@
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@700;800;900&display=swap" rel="stylesheet">
     
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    {% block head %}{% endblock %}
 </head>
 <body class="{% block body_class %}{% endblock %}">
     <div class="glow-overlay" id="glowOverlay"></div>
     
     <!-- App Shell Container -->
     <div class="app-container">
-        <!-- Persistent Side Navigation (App Style) -->
+        <!-- Persistent Side Navigation -->
         <aside class="app-sidebar">
             <div class="sidebar-brand">
                 <div class="brand-mark">ME</div>
             </div>
             <nav class="sidebar-nav">
-                <a href="{{ url_for('home') }}" class="nav-item {% if request.endpoint == 'dashboard' %}active{% endif %}" title="Home">
+                <a href="{{ url_for('home') }}" class="nav-item {% if request.endpoint == 'home' or (request.endpoint == 'dashboard' and not request.query_string) %}active{% endif %}" title="Home">
                     <span class="nav-icon">🏠</span>
                 </a>
                 <a href="{{ url_for('dashboard') }}#movieSections" class="nav-item" title="Explore">
-                    <span class="nav-icon">🛰️</span>
+                    <span class="nav-icon">🎬</span>
                 </a>
                 {% if is_admin %}
-                    <a href="{{ url_for('admin_dashboard') }}" class="nav-item {% if request.endpoint == 'admin_dashboard' %}active{% endif %}" title="Admin">
-                        <span class="nav-icon">⚙️</span>
+                    <a href="{{ url_for('admin_dashboard') }}" class="nav-item {% if request.endpoint == 'admin_dashboard' %}active{% endif %}" title="Admin Control">
+                        <span class="nav-icon">🛡️</span>
                     </a>
                 {% endif %}
             </nav>
             <div class="sidebar-footer">
                 {% if is_logged_in or is_admin %}
-                    <a href="{{ url_for('logout') if not is_admin else url_for('admin_logout') }}" class="nav-item" title="Logout">
+                    <a href="{{ url_for('logout') if not is_admin else url_for('admin_logout') }}" class="nav-item" title="Sign Out">
                         <span class="nav-icon">🚪</span>
                     </a>
                 {% else %}
-                    <a href="{{ url_for('login') }}" class="nav-item" title="Login">
+                    <a href="{{ url_for('login') }}" class="nav-item" title="Sign In">
                         <span class="nav-icon">👤</span>
                     </a>
                 {% endif %}
@@ -57,14 +58,19 @@
         <div class="app-content">
             <header class="app-header">
                 <div class="header-left">
-                    <span class="page-title">{% if request.endpoint == 'dashboard' %}Discover{% elif request.endpoint == 'admin_dashboard' %}Library Center{% else %}MovieStream Elite{% endif %}</span>
+                    <span class="page-title">
+                        {% if request.endpoint == 'dashboard' %}Discover Premium{% elif request.endpoint == 'admin_dashboard' %}Management Hub{% else %}MovieStream Elite{% endif %}
+                    </span>
                 </div>
                 <div class="header-right">
                     {% if not is_logged_in and not is_admin %}
-                        <a href="{{ url_for('signup') }}" class="btn-elite">Start Free</a>
+                        <a href="{{ url_for('signup') }}" class="btn-elite">Get Started</a>
                     {% endif %}
                     <div class="user-pill">
                         <span class="user-avatar">{{ (current_user_name[0] if current_user_name else 'G')|upper }}</span>
+                        {% if current_user_name %}
+                            <span style="font-size: 13px; font-weight: 700; color: var(--mx-text);">{{ current_user_name }}</span>
+                        {% endif %}
                     </div>
                 </div>
             </header>
@@ -83,7 +89,7 @@
                 {% block content %}{% endblock %}
                 
                 <footer class="app-footer">
-                    <p>&copy; {{ current_year }} MovieStream Elite • Version 2.0.4</p>
+                    <p>&copy; {{ current_year }} MovieStream Elite • Digital Cinema Experience</p>
                 </footer>
             </main>
         </div>
@@ -95,30 +101,30 @@
                 <span>Home</span>
             </a>
             <a href="{{ url_for('dashboard') }}#movieSections" class="tab-item">
-                <span class="tab-icon">🛰️</span>
+                <span class="tab-icon">🎬</span>
                 <span>Explore</span>
             </a>
             {% if is_admin %}
                 <a href="{{ url_for('admin_dashboard') }}" class="tab-item {% if request.endpoint == 'admin_dashboard' %}active{% endif %}">
-                    <span class="tab-icon">⚙️</span>
+                    <span class="tab-icon">🛡️</span>
                     <span>Admin</span>
                 </a>
             {% elif is_logged_in %}
                 <a href="{{ url_for('logout') }}" class="tab-item">
                     <span class="tab-icon">🚪</span>
-                    <span>Exit</span>
+                    <span>Logout</span>
                 </a>
             {% else %}
                 <a href="{{ url_for('login') }}" class="tab-item">
                     <span class="tab-icon">👤</span>
-                    <span>Sign In</span>
+                    <span>Login</span>
                 </a>
             {% endif %}
         </nav>
     </div>
 
-    <script src="{{ url_for('static', filename='js/pwa.js') }}"></script>
     <script>
+        // Interactive Glow Effect
         document.addEventListener('mousemove', (e) => {
             const overlay = document.getElementById('glowOverlay');
             if (overlay) {
@@ -129,6 +135,7 @@
             }
         });
 
+        // Auto-dismiss Flash Messages
         document.addEventListener('DOMContentLoaded', () => {
             const flashes = document.querySelectorAll('.flash');
             flashes.forEach(f => {

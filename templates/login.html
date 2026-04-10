@@ -1,35 +1,41 @@
 {% extends "base.html" %}
 
-{% block title %}Login | MovieStream Premium{% endblock %}
+{% block title %}Login | MovieStream Elite{% endblock %}
 
 {% block content %}
 <section class="single-auth">
-    <div class="auth-panel glass">
-        <span class="eyebrow" style="margin-bottom: 16px;">Welcome Back</span>
-        <h1 style="font-size: 32px; font-weight: 800; margin-bottom: 8px;">Sign In</h1>
-        <p style="color: var(--mx-text-dim); margin-bottom: 32px;">Access your library and continue streaming.</p>
+    <div class="auth-panel">
+        <span class="eyebrow" style="color: var(--mx-accent); font-weight: 800; font-size: 12px; text-transform: uppercase; margin-bottom: 12px; display: block;">Authorized Access Only</span>
+        <h1 style="font-size: 40px; font-weight: 950; margin-bottom: 8px; font-family: 'Plus Jakarta Sans', sans-serif; letter-spacing: -0.04em;">Welcome Back</h1>
+        <p style="color: var(--mx-text-dim); margin-bottom: 40px; font-size: 16px;">Step into your personal cinema portal.</p>
         
         <form method="post" action="{{ url_for('login') }}" class="stack-form">
             <div class="form-group">
                 <label>Email Address</label>
-                <input type="email" name="email" placeholder="name@example.com" required>
+                <input type="email" name="email" placeholder="name@premium.com" required autocomplete="email">
             </div>
             <div class="form-group">
-                <label>Security Password</label>
-                <input type="password" name="password" placeholder="••••••••" required>
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <label>Security Password</label>
+                    <a href="#" style="font-size: 12px; color: var(--mx-accent); text-decoration: none; font-weight: 700;">Reset?</a>
+                </div>
+                <input type="password" name="password" placeholder="••••••••" required autocomplete="current-password">
             </div>
-            <div style="margin: 8px 0 24px;">
-                <label style="display: flex; align-items: center; gap: 12px; cursor: pointer;">
-                    <input type="checkbox" name="accept_terms" id="accept_terms" required style="width: 20px; height: 20px;">
-                    <span style="font-size: 13px; color: var(--mx-text-dim);">I am 18+ and accept the Terms & Conditions.</span>
+            <div style="margin: 10px 0 30px;">
+                <label style="display: flex; align-items: center; gap: 14px; cursor: pointer; user-select: none;">
+                    <input type="checkbox" name="accept_terms" id="accept_terms" required style="width: 22px; height: 22px; accent-color: var(--mx-accent); border-radius: 6px;">
+                    <span style="font-size: 14px; color: var(--mx-text-dim); line-height: 1.4;">I confirm I am over 18 and agree to the <strong style="color: white;">Terms of Service</strong>.</span>
                 </label>
             </div>
-            <button type="submit" class="button-apply" style="width: 100%;">Continue Exploring</button>
+            <button type="submit" class="btn-elite" style="width: 100%; padding: 18px; font-size: 16px; border-radius: 18px;">Access Theater</button>
         </form>
         
-        <p style="margin-top: 32px; text-align: center; font-size: 14px; color: var(--mx-text-dim);">
-            New user? <a href="{{ url_for('signup') }}" style="color: var(--mx-accent); text-decoration: none; font-weight: 700;">Create premium account</a>
-        </p>
+        <div style="margin-top: 40px; text-align: center; border-top: 1px solid var(--mx-border); padding-top: 30px;">
+            <p style="font-size: 15px; color: var(--mx-text-dim);">
+                New to MovieStream Elite? <br>
+                <a href="{{ url_for('signup') }}" style="color: var(--mx-accent); text-decoration: none; font-weight: 800; margin-top: 8px; display: inline-block;">Create Premium Membership</a>
+            </p>
+        </div>
     </div>
 </section>
 {% endblock %}

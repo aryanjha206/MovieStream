@@ -5,30 +5,33 @@
 {% block content %}
 <section class="dashboard-hero">
     <div class="hero-content">
-        <span class="eyebrow" style="background: rgba(59, 130, 246, 0.1); color: var(--mx-accent); border: 1px solid var(--mx-accent); padding: 4px 12px; border-radius: 999px; font-size: 11px; font-weight: 800; text-transform: uppercase;">Cinematic Experience</span>
-        <h1>Cinema at Your <br>Command</h1>
-        <p>Welcome back, <strong>{{ current_user_name }}</strong>. Your personal theater is ready for streaming in 4K.</p>
+        <span class="eyebrow">Premium Theater</span>
+        <h1>Cinema Excellence <br>At Your Fingertips</h1>
+        <p>Welcome back, <strong>{{ current_user_name }}</strong>. Discover the latest blockbusters and premium originals in 4K HDR quality.</p>
         
         <form class="toolbar" method="get" action="{{ url_for('dashboard') }}">
-            <input type="search" name="q" placeholder="Discovery search..." value="{{ search_term }}">
+            <input type="search" name="q" placeholder="What are you looking for?" value="{{ search_term }}">
             <select name="category">
-                <option value="">All Categories</option>
+                <option value="">All Genres</option>
                 {% for category in categories %}
                     <option value="{{ category }}" {% if category == selected_category %}selected{% endif %}>{{ category }}</option>
                 {% endfor %}
             </select>
-            <button type="submit" class="button-apply">Find Movies</button>
+            <button type="submit" class="button-apply">Search</button>
         </form>
     </div>
 </section>
 
-<div id="movieSections" style="position: relative;">
+<div id="movieSections">
     {% if sections %}
         {% for section_name, movies in sections.items() %}
             <div class="content-block">
                 <div class="section-heading">
-                    <h2 style="font-family: 'Plus Jakarta Sans', sans-serif;">{{ section_name }}</h2>
-                    <span style="color: var(--mx-accent); font-weight: 800; font-size: 13px;">{{ movies|length }} titles available</span>
+                    <div>
+                        <h2 style="font-family: 'Plus Jakarta Sans', sans-serif;">{{ section_name }}</h2>
+                        <p style="color: var(--mx-text-muted); font-size: 13px; font-weight: 500;">Handpicked for your cinematic taste</p>
+                    </div>
+                    <span style="color: var(--mx-accent); font-weight: 800; font-size: 14px; background: rgba(99, 102, 241, 0.1); padding: 4px 12px; border-radius: 99px;">{{ movies|length }} Titles</span>
                 </div>
                 <div class="movie-row">
                     {% for movie in movies %}
@@ -43,8 +46,12 @@
                             <img src="{{ movie.thumbnail }}" alt="{{ movie.title }}" loading="lazy" onerror="this.src='https://placehold.co/600x900/0f172a/ffffff?text={{ movie.title|urlencode }}'">
                             <div class="movie-overlay">
                                 <div class="movie-card-body">
+                                    <p class="category-tag">{{ movie.category }}</p>
                                     <h3>{{ movie.title }}</h3>
-                                    <p>{{ movie.category }}</p>
+                                    <div style="display: flex; align-items: center; gap: 8px; margin-top: 8px;">
+                                        <span style="background: var(--mx-accent); color: white; padding: 2px 8px; border-radius: 4px; font-size: 10px; font-weight: 900;">4+</span>
+                                        <span style="font-size: 11px; color: white; font-weight: 700;">2h 15m</span>
+                                    </div>
                                 </div>
                             </div>
                         </article>
@@ -53,11 +60,11 @@
             </div>
         {% endfor %}
     {% else %}
-        <div class="empty-state wide" style="text-align: center; padding: 120px 0; background: var(--mx-glass-light); border-radius: var(--radius-xl); border: 1px dashed var(--mx-border);">
-            <div style="font-size: 64px; margin-bottom: 24px;">📽️</div>
-            <h2 style="font-size: 32px; margin-bottom: 12px;">The library is currently empty</h2>
-            <p style="color: var(--mx-text-dim); margin-bottom: 40px;">No matches found. Try exploring other categories or check back later.</p>
-            <a href="{{ url_for('dashboard') }}" class="button-apply" style="text-decoration: none; display: inline-block;">Reset Exploration</a>
+        <div class="empty-state wide" style="text-align: center; padding: 120px 0; background: var(--mx-bg-alt); border-radius: var(--radius-xl); border: 1px solid var(--mx-border);">
+            <div style="font-size: 80px; margin-bottom: 24px;">🎬</div>
+            <h2 style="font-size: 36px; margin-bottom: 12px; font-weight: 900;">No titles found</h2>
+            <p style="color: var(--mx-text-dim); margin-bottom: 40px; max-width: 400px; margin-left: auto; margin-right: auto;">We couldn't find any results for your search. Try adjusting your filters or search terms.</p>
+            <a href="{{ url_for('dashboard') }}" class="btn-elite" style="text-decoration: none; display: inline-block;">Reset Exploration</a>
         </div>
     {% endif %}
 </div>
@@ -66,10 +73,10 @@
 <div class="player-modal" id="playerModal">
     <div class="player-header">
         <div class="player-copy">
-            <h2 id="playerTitle" style="color: white; font-size: 24px; font-weight: 800;">Loading Cinematic Content...</h2>
-            <p id="playerMeta" style="color: var(--mx-accent); font-size: 13px; font-weight: 700; text-transform: uppercase;"></p>
+            <h2 id="playerTitle" style="color: white; font-size: 28px; font-weight: 900; letter-spacing: -0.02em;">Loading...</h2>
+            <p id="playerMeta" style="color: var(--mx-accent); font-size: 14px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em;"></p>
         </div>
-        <button type="button" class="close-player" id="closePlayer" aria-label="Exit Theater">×</button>
+        <button type="button" class="close-player" id="closePlayer" aria-label="Exit Theater">✕</button>
     </div>
     <div class="player-panel">
         <div class="player-frame">

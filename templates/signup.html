@@ -1,49 +1,56 @@
 {% extends "base.html" %}
 
-{% block title %}Sign Up | MovieStream Premium{% endblock %}
+{% block title %}Sign Up | MovieStream Elite{% endblock %}
 
 {% block content %}
 <section class="single-auth">
-    <div class="auth-panel glass">
-        <span class="eyebrow" style="margin-bottom: 16px;">Guided Onboarding</span>
-        <h1 style="font-size: 32px; font-weight: 800; margin-bottom: 8px;">Create Account</h1>
-        <p style="color: var(--mx-text-dim); margin-bottom: 32px;">Join thousands of viewers in high-quality streaming.</p>
+    <div class="auth-panel">
+        <span class="eyebrow" style="color: var(--mx-accent); font-weight: 800; font-size: 12px; text-transform: uppercase; margin-bottom: 12px; display: block;">Membership Onboarding</span>
+        <h1 style="font-size: 40px; font-weight: 950; margin-bottom: 8px; font-family: 'Plus Jakarta Sans', sans-serif; letter-spacing: -0.04em;">Begin Experience</h1>
+        <p style="color: var(--mx-text-dim); margin-bottom: 40px; font-size: 16px;">Create your elite cinematic identity in a few steps.</p>
 
-        <div class="signup-progress">
-            <div class="signup-progress-bar">
-                <span class="signup-progress-fill" id="signupProgressFill" style="width: {{ (current_step / 6 * 100)|int }}%;"></span>
+        <div class="signup-progress" style="margin-bottom: 40px;">
+            <div class="signup-progress-bar" style="height: 6px; background: rgba(255,255,255,0.05); border-radius: 3px; overflow: hidden;">
+                <span class="signup-progress-fill" id="signupProgressFill" style="--progress-width: {{ (current_step / 6 * 100)|int }}%; width: var(--progress-width); height: 100%; background: var(--mx-accent-gradient); display: block; transition: width 0.4s ease;"></span>
             </div>
-            <p id="signupStepLabel" style="font-size: 13px; font-weight: 700; color: var(--mx-accent); margin-top: 12px; text-transform: uppercase;">Initializing...</p>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 12px;">
+                <p id="signupStepLabel" style="font-size: 12px; font-weight: 800; color: var(--mx-accent); text-transform: uppercase; letter-spacing: 0.05em;">Initial Phase</p>
+                <p style="font-size: 12px; color: var(--mx-text-muted); font-weight: 700;">Step <span id="currentStepNum">{{ current_step }}</span> of 6</p>
+            </div>
         </div>
 
         <div class="signup-wizard" id="signupWizard" data-email-verified="{{ 'true' if email_verified else 'false' }}" data-current-step="{{ current_step }}">
             <!-- STEP 1: Email -->
             <section class="signup-step {% if current_step == 1 %}active{% endif %}" data-step="1">
                 <form method="post" action="{{ url_for('signup_send_otp') }}" class="stack-form">
-                    <label>Email Address</label>
-                    <input
-                        type="email"
-                        name="email"
-                        value="{{ email }}"
-                        placeholder="e.g. name@domain.com"
-                        {% if email_verified %}readonly{% endif %}
-                        required
-                    >
-                    <button type="submit" class="button-apply" style="width: 100%;">
-                        {% if email_verified %}Resend Code{% else %}Send Verification OTP{% endif %}
+                    <div class="form-group">
+                        <label>Email Address</label>
+                        <input
+                            type="email"
+                            name="email"
+                            value="{{ email }}"
+                            placeholder="name@premium.com"
+                            {% if email_verified %}readonly{% endif %}
+                            required
+                        >
+                    </div>
+                    <button type="submit" class="btn-elite" style="width: 100%; border-radius: 16px; padding: 16px;">
+                        {% if email_verified %}Request New Code{% else %}Generate Security Code{% endif %}
                     </button>
-                    <p style="font-size: 13px; color: var(--mx-text-dim); text-align: center;">We'll send a 6-digit secure code.</p>
+                    <p style="font-size: 13px; color: var(--mx-text-muted); text-align: center;">A 6-digit verification code will be sent to your inbox.</p>
                 </form>
             </section>
 
             <!-- STEP 2: OTP -->
             <section class="signup-step {% if current_step == 2 %}active{% endif %}" data-step="2">
                 <form method="post" action="{{ url_for('signup_verify_otp') }}" class="stack-form">
-                    <label>Security Code</label>
-                    <input type="text" name="otp" maxlength="6" placeholder="000 000" style="text-align: center; font-size: 24px; letter-spacing: 8px;" required>
-                    <div class="inline-actions" style="display: grid; grid-template-columns: 1fr 2fr; gap: 12px; margin-top: 12px;">
-                        <button type="button" class="nav-btn step-back" style="background: rgba(255,255,255,0.05); padding: 14px; border-radius: var(--radius-md); text-align: center;">Back</button>
-                        <button type="submit" class="button-apply">Verify & Continue</button>
+                    <div class="form-group">
+                        <label>Verification Code</label>
+                        <input type="text" name="otp" maxlength="6" placeholder="000000" style="text-align: center; font-size: 28px; letter-spacing: 0.4em; font-family: monospace; font-weight: 900;" required>
+                    </div>
+                    <div class="inline-actions" style="display: grid; grid-template-columns: 1fr 2fr; gap: 16px;">
+                        <button type="button" class="nav-btn step-back btn-elite" style="background: rgba(255,255,255,0.05); box-shadow: none; border: 1px solid var(--mx-border);">Back</button>
+                        <button type="submit" class="btn-elite">Verify Session</button>
                     </div>
                 </form>
             </section>
@@ -52,67 +59,94 @@
             <form method="post" action="{{ url_for('signup_create_account') }}" class="stack-form" id="signupPasswordForm">
                 <!-- STEP 3: Identity -->
                 <section class="signup-step {% if current_step >= 3 %}active{% endif %}" data-step="3">
-                    <label>Full Name</label>
-                    <input type="text" name="name" value="{{ name }}" placeholder="Enter your full name" required>
-                    <div class="inline-actions" style="display: grid; grid-template-columns: 1fr 2fr; gap: 12px; margin-top: 12px;">
-                        <button type="button" class="nav-btn step-back" style="background: rgba(255,255,255,0.05); padding: 14px; border-radius: var(--radius-md); text-align: center;">Back</button>
-                        <button type="button" class="button-apply step-next">Continue</button>
+                    <div class="form-group">
+                        <label>Full Legal Name</label>
+                        <input type="text" name="name" value="{{ name }}" placeholder="Johnathan Doe" required>
+                    </div>
+                    <div class="inline-actions" style="display: grid; grid-template-columns: 1fr 2fr; gap: 16px;">
+                        <button type="button" class="nav-btn step-back btn-elite" style="background: rgba(255,255,255,0.05); box-shadow: none; border: 1px solid var(--mx-border);">Back</button>
+                        <button type="button" class="btn-elite step-next">Proceed</button>
                     </div>
                 </section>
 
                 <!-- STEP 4: Age -->
                 <section class="signup-step" data-step="4">
-                    <label>How old are you?</label>
-                    <input type="number" name="age" min="18" value="{{ age }}" placeholder="18+" required>
-                    <p style="font-size: 13px; color: var(--mx-text-dim);">Minimum age requirement is 18 years.</p>
-                    <div class="inline-actions" style="display: grid; grid-template-columns: 1fr 2fr; gap: 12px; margin-top: 12px;">
-                        <button type="button" class="nav-btn step-back" style="background: rgba(255,255,255,0.05); padding: 14px; border-radius: var(--radius-md); text-align: center;">Back</button>
-                        <button type="button" class="button-apply step-next">Continue</button>
+                    <div class="form-group">
+                        <label>Date of Birth Recognition (Age)</label>
+                        <input type="number" name="age" min="18" value="{{ age }}" placeholder="18+" required>
+                        <p style="font-size: 12px; color: var(--mx-text-muted);">Access restricted to individuals aged 18 and above.</p>
+                    </div>
+                    <div class="inline-actions" style="display: grid; grid-template-columns: 1fr 2fr; gap: 16px;">
+                        <button type="button" class="nav-btn step-back btn-elite" style="background: rgba(255,255,255,0.05); box-shadow: none; border: 1px solid var(--mx-border);">Back</button>
+                        <button type="button" class="btn-elite step-next">Continue</button>
                     </div>
                 </section>
 
                 <!-- STEP 5: Security -->
                 <section class="signup-step" data-step="5">
-                    <label>Create Password</label>
-                    <input type="password" name="password" minlength="8" placeholder="At least 8 characters" required>
-                    <label>Confirm Password</label>
-                    <input type="password" name="confirm_password" minlength="8" placeholder="Repeat password" required>
-                    <div class="inline-actions" style="display: grid; grid-template-columns: 1fr 2fr; gap: 12px; margin-top: 12px;">
-                        <button type="button" class="nav-btn step-back" style="background: rgba(255,255,255,0.05); padding: 14px; border-radius: var(--radius-md); text-align: center;">Back</button>
-                        <button type="button" class="button-apply step-next">Continue</button>
+                    <div class="form-group">
+                        <label>Access Password</label>
+                        <input type="password" name="password" minlength="8" placeholder="Secure passphrase" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Confirm Passphrase</label>
+                        <input type="password" name="confirm_password" minlength="8" placeholder="Repeat for verification" required>
+                    </div>
+                    <div class="inline-actions" style="display: grid; grid-template-columns: 1fr 2fr; gap: 16px;">
+                        <button type="button" class="nav-btn step-back btn-elite" style="background: rgba(255,255,255,0.05); box-shadow: none; border: 1px solid var(--mx-border);">Back</button>
+                        <button type="button" class="btn-elite step-next">Finalize</button>
                     </div>
                 </section>
 
                 <!-- STEP 6: Terms -->
                 <section class="signup-step" data-step="6">
-                    <div style="background: rgba(255,255,255,0.02); padding: 20px; border-radius: var(--radius-md); border: 1px solid var(--mx-border); margin-bottom: 24px;">
-                        <h4 style="margin-bottom: 12px; font-size: 14px; color: var(--mx-accent);">Access Agreement</h4>
-                        <ul style="font-size: 12px; color: var(--mx-text-dim); list-style: none; padding: 0; display: flex; flex-direction: column; gap: 8px;">
-                            <li>• I am at least 18 years old.</li>
-                            <li>• I accept MovieStream's terms and privacy policy.</li>
-                            <li>• I will use the service for personal viewing only.</li>
-                            <li>• Account details remain private and secure.</li>
+                    <div style="background: rgba(99, 102, 241, 0.05); padding: 24px; border-radius: 20px; border: 1px solid rgba(99, 102, 241, 0.2); margin-bottom: 24px;">
+                        <h4 style="margin-bottom: 12px; font-size: 15px; color: white; display: flex; align-items: center; gap: 8px;">
+                            <span style="font-size: 18px;">🛡️</span> Membership Agreement
+                        </h4>
+                        <ul style="font-size: 13px; color: var(--mx-text-dim); list-style: none; padding: 0; display: flex; flex-direction: column; gap: 10px;">
+                            <li style="display: flex; gap: 10px;"><span>•</span> I verify that I am at least 18 years of age.</li>
+                            <li style="display: flex; gap: 10px;"><span>•</span> I accept the Elite Digital Privacy Protocol.</li>
+                            <li style="display: flex; gap: 10px;"><span>•</span> Usage is restricted to individual entertainment.</li>
+                            <li style="display: flex; gap: 10px;"><span>•</span> Security credentials must remain confidential.</li>
                         </ul>
                     </div>
 
-                    <label style="display: flex; align-items: flex-start; gap: 12px; cursor: pointer;">
-                        <input type="checkbox" name="accept_terms" required style="width: 20px; height: 20px; margin-top: 2px;">
-                        <span style="font-size: 13px;">I agree to the terms and verify my age.</span>
+                    <label style="display: flex; align-items: flex-start; gap: 14px; cursor: pointer; user-select: none;">
+                        <input type="checkbox" name="accept_terms" required style="width: 22px; height: 22px; margin-top: 2px; accent-color: var(--mx-accent);">
+                        <span style="font-size: 14px; color: var(--mx-text-dim); line-height: 1.5;">I have read and agree to all membership protocols.</span>
                     </label>
 
-                    <div class="inline-actions" style="display: grid; grid-template-columns: 1fr 2fr; gap: 12px; margin-top: 24px;">
-                        <button type="button" class="nav-btn step-back" style="background: rgba(255,255,255,0.05); padding: 14px; border-radius: var(--radius-md); text-align: center;">Back</button>
-                        <button type="submit" class="button-apply">Establish Secure Access</button>
+                    <div class="inline-actions" style="display: grid; grid-template-columns: 1fr 2fr; gap: 16px; margin-top: 30px;">
+                        <button type="button" class="nav-btn step-back btn-elite" style="background: rgba(255,255,255,0.05); box-shadow: none; border: 1px solid var(--mx-border);">Back</button>
+                        <button type="submit" class="btn-elite">Initialize Account</button>
                     </div>
                 </section>
             </form>
         </div>
 
-        <p style="text-align: center; margin-top: 32px; font-size: 14px; color: var(--mx-text-dim);">
-            Already have an account? <a href="{{ url_for('login') }}" style="color: var(--mx-accent); text-decoration: none; font-weight: 700;">Sign In</a>
-        </p>
+        <div style="margin-top: 40px; text-align: center; border-top: 1px solid var(--mx-border); padding-top: 30px;">
+            <p style="font-size: 15px; color: var(--mx-text-dim);">
+                Already possess an account? <br>
+                <a href="{{ url_for('login') }}" style="color: var(--mx-accent); text-decoration: none; font-weight: 800; margin-top: 8px; display: inline-block;">Sign In Securely</a>
+            </p>
+        </div>
     </div>
 </section>
+
+<style>
+    .signup-step {
+        display: none;
+    }
+    .signup-step.active {
+        display: block;
+        animation: slideUp 0.5s cubic-bezier(0.19, 1, 0.22, 1);
+    }
+    @keyframes slideUp {
+        from { opacity: 0; transform: translateY(20px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+</style>
 {% endblock %}
 
 {% block scripts %}

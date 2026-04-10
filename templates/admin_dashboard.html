@@ -3,30 +3,30 @@
 {% block title %}Admin Control | MovieStream Elite{% endblock %}
 
 {% block content %}
-<section class="dashboard-hero" style="min-height: 300px; padding: 60px 80px;">
+<section class="dashboard-hero" style="min-height: 320px; padding: 60px 80px;">
     <div class="hero-content">
-        <span class="eyebrow" style="background: rgba(255,255,255,0.1); color: white; border-color: rgba(255,255,255,0.2);">System Administrator</span>
-        <h1 style="font-size: 40px;">Library Management</h1>
-        <p style="color: rgba(255,255,255,0.6);">Curate, categorize, and deploy cinematic content.</p>
+        <span class="eyebrow" style="color: white; border-color: rgba(255,255,255,0.3);">System Administrator</span>
+        <h1 style="font-size: 48px; letter-spacing: -0.04em;">Catalog Operations</h1>
+        <p style="color: var(--mx-text-dim);">Manage your premium cinematic assets and platform taxonomy.</p>
     </div>
 </section>
 
-<div class="admin-interface" style="display: grid; grid-template-columns: 1.4fr 0.6fr; gap: 40px; margin-top: -40px; position: relative; z-index: 10;">
+<div class="admin-interface" style="display: grid; grid-template-columns: 1.4fr 0.6fr; gap: 40px; margin-top: -60px; position: relative; z-index: 10;">
     <!-- Content Uploader -->
-    <div class="auth-panel glass" style="max-width: none;">
-        <h2 id="movieFormTitle" style="font-size: 20px; font-weight: 800; margin-bottom: 24px; display: flex; align-items: center; gap: 12px;">
-            <span style="width: 8px; height: 8px; background: var(--mx-accent); border-radius: 50%;"></span>
-            Upload Intelligence
+    <div class="auth-panel" style="max-width: none;">
+        <h2 id="movieFormTitle" style="font-size: 24px; font-weight: 900; margin-bottom: 30px; display: flex; align-items: center; gap: 15px; font-family: 'Plus Jakarta Sans', sans-serif;">
+            <span style="width: 12px; height: 12px; background: var(--mx-accent); border-radius: 4px; display: block;"></span>
+            Asset Intelligence
         </h2>
         <form method="post" action="{{ url_for('add_movie') }}" class="stack-form" id="movieForm">
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px;">
                 <div class="form-group">
-                    <label>Title</label>
-                    <input type="text" name="title" id="movieTitle" placeholder="e.g. Inception (2010)" required>
+                    <label>Resource Title</label>
+                    <input type="text" name="title" id="movieTitle" placeholder="e.g. Interstellar (2014)" required>
                 </div>
                 <div class="form-group">
-                    <label>Category</label>
-                    <select name="category" id="movieCategory" required>
+                    <label>Classification</label>
+                    <select name="category" id="movieCategory" required style="background: rgba(255,255,255,0.05); border: 1px solid var(--mx-border); padding: 16px 20px; border-radius: 14px; color: white; display: block; width: 100%; outline: none;">
                         {% for category in categories %}
                             <option value="{{ category.name }}">{{ category.name }}</option>
                         {% endfor %}
@@ -35,52 +35,52 @@
                 </div>
             </div>
             
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px;">
                 <div class="form-group">
-                    <label>Thumbnail URL</label>
-                    <input type="text" name="thumbnail" id="movieThumbnail" placeholder="https://..." required>
+                    <label>Poster Asset URL</label>
+                    <input type="text" name="thumbnail" id="movieThumbnail" placeholder="https://image-source.com/..." required>
                 </div>
                 <div class="form-group">
-                    <label>Video URL / Embed</label>
-                    <input type="text" name="video_url" id="movieVideoUrl" placeholder="Direct link or YouTube/Vimeo" required>
+                    <label>Stream Source (URL/Embed)</label>
+                    <input type="text" name="video_url" id="movieVideoUrl" placeholder="Direct MP4 or YouTube/Vimeo" required>
                 </div>
             </div>
 
             <div class="form-group">
-                <label>Description (Optional)</label>
-                <textarea name="description" id="movieDescription" rows="3" placeholder="Summary of the content..."></textarea>
+                <label>Narrative Summary (Optional)</label>
+                <textarea name="description" id="movieDescription" rows="4" placeholder="Briefly describe the cinematic experience..." style="background: rgba(255,255,255,0.05); border: 1px solid var(--mx-border); padding: 16px 20px; border-radius: 14px; color: white; font-family: inherit; font-size: 15px; outline: none;"></textarea>
             </div>
 
-            <div style="display: flex; align-items: center; justify-content: space-between; margin-top: 10px;">
-                <label style="display: flex; align-items: center; gap: 12px; cursor: pointer;">
-                    <input type="checkbox" name="is_trending" id="movieTrending" style="width: 20px; height: 20px;">
-                    <span style="font-size: 14px; font-weight: 600;">Feature on Spotlight</span>
+            <div style="display: flex; align-items: center; justify-content: space-between; margin-top: 20px;">
+                <label style="display: flex; align-items: center; gap: 14px; cursor: pointer; user-select: none;">
+                    <input type="checkbox" name="is_trending" id="movieTrending" style="width: 22px; height: 22px; accent-color: var(--mx-accent);">
+                    <span style="font-size: 15px; font-weight: 700; color: var(--mx-text-dim);">Feature in Spotlight Selection</span>
                 </label>
                 
-                <div style="display: flex; gap: 12px;">
-                    <button type="button" id="resetMovieForm" style="background: rgba(255,255,255,0.05); color: white; border: 1px solid var(--mx-border); padding: 12px 24px; border-radius: var(--radius-md); cursor: pointer; font-weight: 600;">Discard</button>
-                    <button type="submit" class="button-apply" id="movieSubmitButton">Deploy Content</button>
+                <div style="display: flex; gap: 16px;">
+                    <button type="button" id="resetMovieForm" class="btn-elite" style="background: rgba(255,255,255,0.05); color: white; border: 1px solid var(--mx-border); box-shadow: none;">Discard</button>
+                    <button type="submit" class="btn-elite" id="movieSubmitButton">Deploy Asset</button>
                 </div>
             </div>
         </form>
     </div>
 
     <!-- Category Manager -->
-    <div class="auth-panel glass" style="max-width: none;">
-        <h2 style="font-size: 20px; font-weight: 800; margin-bottom: 24px;">Taxonomy</h2>
-        <form method="post" action="{{ url_for('add_category') }}" class="stack-form" style="margin-bottom: 32px;">
-            <div style="display: flex; gap: 8px;">
-                <input type="text" name="name" placeholder="New Genre" required style="flex: 1;">
-                <button type="submit" class="button-apply" style="width: auto; padding: 0 20px;">+</button>
+    <div class="auth-panel" style="max-width: none;">
+        <h2 style="font-size: 24px; font-weight: 900; margin-bottom: 30px; font-family: 'Plus Jakarta Sans', sans-serif;">Taxonomy</h2>
+        <form method="post" action="{{ url_for('add_category') }}" class="stack-form" style="margin-bottom: 40px;">
+            <div style="display: flex; gap: 12px;">
+                <input type="text" name="name" placeholder="New Genre Class" required style="flex: 1;">
+                <button type="submit" class="btn-elite" style="width: auto; padding: 0 24px;">+</button>
             </div>
         </form>
         
-        <div style="display: flex; flex-direction: column; gap: 8px;">
+        <div style="display: flex; flex-direction: column; gap: 12px; max-height: 400px; overflow-y: auto; padding-right: 10px;">
             {% for category in categories %}
-                <div style="background: rgba(255,255,255,0.03); padding: 12px 16px; border-radius: 10px; border: 1px solid var(--mx-border); display: flex; justify-content: space-between; align-items: center;">
-                    <span style="font-size: 14px; font-weight: 600;">{{ category.name }}</span>
-                    <form method="post" action="{{ url_for('delete_category', category_id=category._id) }}">
-                        <button type="submit" style="background: transparent; border: none; color: #ef4444; cursor: pointer; font-size: 18px;">&times;</button>
+                <div style="background: rgba(255,255,255,0.03); padding: 16px 20px; border-radius: 16px; border: 1px solid var(--mx-border); display: flex; justify-content: space-between; align-items: center; transition: var(--transition-base);">
+                    <span style="font-size: 15px; font-weight: 700;">{{ category.name }}</span>
+                    <form method="post" action="{{ url_for('delete_category', category_id=category._id) }}" style="display: flex;">
+                        <button type="submit" style="background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.2); color: #ef4444; width: 32px; height: 32px; border-radius: 8px; cursor: pointer; font-size: 20px; display: flex; align-items: center; justify-content: center; transition: var(--transition-fast);">×</button>
                     </form>
                 </div>
             {% endfor %}
@@ -88,26 +88,29 @@
     </div>
 </div>
 
-<section class="content-block" style="margin-top: 60px;">
+<section class="content-block" style="margin-top: 80px;">
     <div class="section-heading">
-        <h2>Active Catalog</h2>
-        <span class="eyebrow" style="background: var(--mx-accent); color: white; border: none;">{{ movies|length }} Items Live</span>
+        <div>
+            <h2 style="font-family: 'Plus Jakarta Sans', sans-serif;">Active Inventory</h2>
+            <p style="color: var(--mx-text-muted); font-size: 13px; font-weight: 700; margin-top: 4px;">Live assets currently available for streaming</p>
+        </div>
+        <span style="color: white; background: var(--mx-accent-gradient); padding: 6px 16px; border-radius: 99px; font-weight: 800; font-size: 14px; box-shadow: 0 5px 15px var(--mx-accent-glow);">{{ movies|length }} Assets</span>
     </div>
     
     <div class="movie-row">
         {% for movie in movies %}
             <article class="movie-card">
                 <img src="{{ movie.thumbnail }}" alt="{{ movie.title }}" onerror="this.src='https://placehold.co/600x900/0f172a/ffffff?text={{ movie.title|urlencode }}'">
-                <div class="movie-overlay" style="background: linear-gradient(0deg, rgba(3,7,18,1) 0%, rgba(3,7,18,0.4) 60%, transparent 100%);">
+                <div class="movie-overlay" style="opacity: 1; background: linear-gradient(0deg, rgba(2,6,23,0.95) 0%, rgba(2,6,23,0.4) 60%, transparent 100%);">
                     <div class="movie-card-body">
-                        <h3 style="font-size: 16px;">{{ movie.title }}</h3>
-                        <p style="font-size: 11px; margin-bottom: 16px; opacity: 0.8;">{{ movie.category }}</p>
+                        <p class="category-tag" style="font-size: 10px; margin-bottom: 4px;">{{ movie.category }}</p>
+                        <h3 style="font-size: 17px; margin-bottom: 16px;">{{ movie.title }}</h3>
                         
-                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
                             <button
                                 type="button"
-                                class="edit-movie-trigger"
-                                style="background: white; color: black; border: none; padding: 8px; border-radius: 6px; font-size: 11px; font-weight: 700; cursor: pointer;"
+                                class="edit-movie-trigger btn-elite"
+                                style="background: white; color: black; box-shadow: none; font-size: 12px; padding: 10px; border-radius: 10px; width: 100%;"
                                 data-id="{{ movie.id }}"
                                 data-title="{{ movie.title }}"
                                 data-category="{{ movie.category }}"
@@ -116,10 +119,10 @@
                                 data-description="{{ movie.description }}"
                                 data-trending="{{ 'true' if movie.is_trending else 'false' }}"
                             >
-                                Edit
+                                Edit Selection
                             </button>
-                            <form method="post" action="{{ url_for('delete_movie', movie_id=movie.id) }}" onsubmit="return confirm('Archive this content permanently?')">
-                                <button type="submit" style="background: #ef4444; color: white; border: none; padding: 8px; border-radius: 6px; font-size: 11px; font-weight: 700; width: 100%; cursor: pointer;">Delete</button>
+                            <form method="post" action="{{ url_for('delete_movie', movie_id=movie.id) }}" onsubmit="return confirm('Relinquish this asset permanently?')">
+                                <button type="submit" class="btn-elite" style="background: #ef4444; box-shadow: none; font-size: 12px; padding: 10px; border-radius: 10px; width: 100%;">Decommission</button>
                             </form>
                         </div>
                     </div>

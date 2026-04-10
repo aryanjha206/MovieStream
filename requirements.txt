@@ -3,3 +3,5 @@ Flask-Mail==0.10.0
 pymongo==4.10.1
 python-dotenv==1.0.1
 dnspython
+pandas
+openpyxl

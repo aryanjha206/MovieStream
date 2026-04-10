@@ -10,6 +10,8 @@ from flask import Flask, Response, flash, jsonify, redirect, render_template, re
 from flask_mail import Mail, Message
 from pymongo import ASCENDING, MongoClient
 from pymongo.errors import DuplicateKeyError
+import pandas as pd
+import io
 from werkzeug.security import check_password_hash, generate_password_hash
 
 
@@ -583,6 +585,63 @@ def update_movie(movie_id):
         return redirect(url_for("admin_dashboard"))
 
     flash("Movie updated successfully.", "success")
+    return redirect(url_for("admin_dashboard"))
+
+
+@app.post("/admin/movies/bulk")
+@admin_required
+def bulk_upload_movies():
+    if "excel_file" not in request.files:
+        flash("No file part", "danger")
+        return redirect(url_for("admin_dashboard"))
+
+    file = request.files["excel_file"]
+    if file.filename == "":
+        flash("No selected file", "danger")
+        return redirect(url_for("admin_dashboard"))
+
+    if file and (file.filename.endswith(".xlsx") or file.filename.endswith(".xls")):
+        try:
+            df = pd.read_excel(file)
+            required_columns = ["title", "category", "thumbnail", "video_url"]
+            for col in required_columns:
+                if col not in df.columns:
+                    flash(f"Missing required column: {col}", "danger")
+                    return redirect(url_for("admin_dashboard"))
+
+            movies_to_insert = []
+            for _, row in df.iterrows():
+                title = str(row.get("title", "")).strip()
+                category = str(row.get("category", "")).strip()
+                thumbnail = str(row.get("thumbnail", "")).strip()
+                video_url = str(row.get("video_url", "")).strip()
+                
+                if not title or title.lower() == "nan": continue
+
+                movie_data = {
+                    "title": title,
+                    "category": category if category.lower() != "nan" else "Uncategorized",
+                    "thumbnail": normalize_url(thumbnail),
+                    "video_url": normalize_url(video_url),
+                    "description": str(row.get("description", "")).strip() if str(row.get("description", "")).lower() != "nan" else "",
+                    "is_trending": str(row.get("is_trending", "")).lower() in ["true", "1", "yes", "on"],
+                    "created_at": utc_now(),
+                    "updated_at": utc_now(),
+                }
+                if movie_data["title"] and movie_data["thumbnail"] and movie_data["video_url"]:
+                    movies_to_insert.append(movie_data)
+
+            if movies_to_insert:
+                movies_collection.insert_many(movies_to_insert)
+                flash(f"Successfully uploaded {len(movies_to_insert)} movies.", "success")
+            else:
+                flash("No valid movie data found in the file.", "warning")
+
+        except Exception as e:
+            flash(f"Error processing Excel file: {str(e)}", "danger")
+    else:
+        flash("Invalid file format. Please upload an Excel file (.xlsx or .xls).", "danger")
+
     return redirect(url_for("admin_dashboard"))
 
 

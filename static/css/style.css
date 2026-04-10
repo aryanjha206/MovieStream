@@ -59,7 +59,7 @@ body {
     color: var(--mx-text);
     font-family: 'Inter', system-ui, -apple-system, sans-serif;
     line-height: 1.5;
-    overflow: hidden;
+    overflow-x: hidden;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
 }
@@ -237,6 +237,7 @@ body {
     backdrop-filter: blur(12px);
     border-bottom: 1px solid var(--mx-border);
     z-index: 900;
+    transition: var(--transition-base);
 }
 
 .page-title {
@@ -421,6 +422,29 @@ body {
     max-width: 500px;
     box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
     transition: var(--transition-base);
+}
+
+.bulk-import-zone {
+    border: 2px dashed var(--mx-border);
+    border-radius: var(--radius-lg);
+    padding: 40px;
+    text-align: center;
+    transition: var(--transition-base);
+    background: var(--mx-bg-alt);
+    cursor: pointer;
+    position: relative;
+}
+
+.bulk-import-zone:hover {
+    border-color: var(--mx-accent);
+    background: var(--mx-accent-glow);
+}
+
+.bulk-import-zone input[type="file"] {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    cursor: pointer;
 }
 
 .toolbar:focus-within {
@@ -796,6 +820,38 @@ body {
 
     .movie-card-body h3 {
         font-size: 14px;
+    }
+
+    .admin-interface {
+        grid-template-columns: 1fr !important;
+        gap: 24px !important;
+    }
+
+    .dashboard-hero {
+        min-height: auto !important;
+        padding: 40px 20px !important;
+    }
+
+    .hero-content h1 {
+        font-size: 32px !important;
+    }
+
+    .auth-panel {
+        padding: 30px 20px !important;
+        border-radius: 24px !important;
+    }
+
+    .app-header {
+        height: 70px !important;
+        padding: 0 20px !important;
+    }
+
+    .page-title {
+        font-size: 18px !important;
+    }
+
+    .user-pill span:not(.user-avatar) {
+        display: none;
     }
 }
 

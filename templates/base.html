@@ -122,7 +122,8 @@
     <script>
         // Auto-dismiss Flash Messages
         document.addEventListener('DOMContentLoaded', () => {
-            lucide.createIcons();
+            if (window.lucide) lucide.createIcons();
+            
             const flashes = document.querySelectorAll('.flash');
             flashes.forEach(f => {
                 setTimeout(() => {

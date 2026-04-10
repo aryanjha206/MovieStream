@@ -6,20 +6,36 @@
 <section class="dashboard-hero" style="min-height: 320px; padding: 60px 80px;">
     <div class="hero-content">
         <span class="eyebrow" style="color: var(--mx-accent); border-color: var(--mx-border);">System Administrator</span>
-        <h1 style="font-size: 48px; letter-spacing: -0.04em; color: var(--mx-text);">Catalog Operations</h1>
-        <p style="color: var(--mx-text-dim);">Manage your premium cinematic assets and platform taxonomy.</p>
+        <h1 style="font-size: 48px; letter-spacing: -0.04em; color: var(--mx-text); font-family: 'Plus Jakarta Sans', sans-serif;">Catalog Operations</h1>
+        <p style="color: var(--mx-text-dim); font-size: 18px; margin-top: 10px;">Manage your premium cinematic assets and platform taxonomy.</p>
     </div>
 </section>
 
-<div class="admin-interface" style="display: grid; grid-template-columns: 1.4fr 0.6fr; gap: 40px; margin-top: -60px; position: relative; z-index: 10;">
+<div class="admin-interface" style="display: grid; grid-template-columns: 1.4fr 0.6fr; gap: 40px; margin-top: -60px; position: relative; z-index: 10; padding: 0 20px;">
     <!-- Content Uploader -->
     <div class="auth-panel" style="max-width: none;">
         <h2 id="movieFormTitle" style="font-size: 24px; font-weight: 900; margin-bottom: 30px; display: flex; align-items: center; gap: 15px; font-family: 'Plus Jakarta Sans', sans-serif;">
             <span style="width: 12px; height: 12px; background: var(--mx-accent); border-radius: 4px; display: block;"></span>
             Asset Intelligence
         </h2>
+        
+        <!-- Bulk Import Module -->
+        <div style="margin-bottom: 40px; padding: 24px; background: rgba(136, 215, 30, 0.05); border-radius: 20px; border: 1px solid rgba(136, 215, 30, 0.2);">
+            <h3 style="font-size: 16px; font-weight: 800; margin-bottom: 16px; color: var(--mx-text);">Bulk Data Ingestion</h3>
+            <form action="{{ url_for('bulk_upload_movies') }}" method="post" enctype="multipart/form-data">
+                <div class="bulk-import-zone">
+                    <i data-lucide="upload-cloud" style="width: 40px; height: 40px; color: var(--mx-accent); margin-bottom: 12px;"></i>
+                    <p style="font-size: 14px; font-weight: 700; color: var(--mx-text);">Click or Drag Excel File</p>
+                    <p style="font-size: 12px; color: var(--mx-text-muted); margin-top: 4px;">Supports .xlsx and .xls (title, category, thumbnail, video_url)</p>
+                    <input type="file" name="excel_file" accept=".xlsx, .xls" required onchange="this.form.submit()">
+                </div>
+            </form>
+        </div>
+
+        <div style="height: 1px; background: var(--mx-border); margin-bottom: 40px;"></div>
+
         <form method="post" action="{{ url_for('add_movie') }}" class="stack-form" id="movieForm">
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px;">
+            <div class="admin-form-row" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 24px;">
                 <div class="form-group">
                     <label>Resource Title</label>
                     <input type="text" name="title" id="movieTitle" placeholder="e.g. Interstellar (2014)" required>
@@ -35,7 +51,7 @@
                 </div>
             </div>
             
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px;">
+            <div class="admin-form-row" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 24px;">
                 <div class="form-group">
                     <label>Poster Asset URL</label>
                     <input type="text" name="thumbnail" id="movieThumbnail" placeholder="https://image-source.com/..." required>
@@ -80,7 +96,9 @@
                 <div style="background: rgba(255,255,255,0.03); padding: 16px 20px; border-radius: 16px; border: 1px solid var(--mx-border); display: flex; justify-content: space-between; align-items: center; transition: var(--transition-base);">
                     <span style="font-size: 15px; font-weight: 700;">{{ category.name }}</span>
                     <form method="post" action="{{ url_for('delete_category', category_id=category._id) }}" style="display: flex;">
-                        <button type="submit" style="background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.2); color: #ef4444; width: 32px; height: 32px; border-radius: 8px; cursor: pointer; font-size: 20px; display: flex; align-items: center; justify-content: center; transition: var(--transition-fast);">×</button>
+                        <button type="submit" style="background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.2); color: #ef4444; width: 36px; height: 36px; border-radius: 10px; cursor: pointer; font-size: 20px; display: flex; align-items: center; justify-content: center; transition: var(--transition-fast);">
+                            <i data-lucide="trash-2" style="width: 16px; height: 16px;"></i>
+                        </button>
                     </form>
                 </div>
             {% endfor %}

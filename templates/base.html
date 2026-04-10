@@ -124,17 +124,6 @@
     </div>
 
     <script>
-        // Interactive Glow Effect
-        document.addEventListener('mousemove', (e) => {
-            const overlay = document.getElementById('glowOverlay');
-            if (overlay) {
-                const x = (e.clientX / window.innerWidth) * 100;
-                const y = (e.clientY / window.innerHeight) * 100;
-                overlay.style.setProperty('--mouse-x', `${x}%`);
-                overlay.style.setProperty('--mouse-y', `${y}%`);
-            }
-        });
-
         // Auto-dismiss Flash Messages
         document.addEventListener('DOMContentLoaded', () => {
             const flashes = document.querySelectorAll('.flash');

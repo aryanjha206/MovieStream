@@ -17,6 +17,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@700;800;900&display=swap" rel="stylesheet">
     
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <script src="https://unpkg.com/lucide@latest"></script>
     {% block head %}{% endblock %}
 </head>
 <body class="{% block body_class %}{% endblock %}">
@@ -26,30 +27,27 @@
     <div class="app-container">
         <!-- Persistent Side Navigation -->
         <aside class="app-sidebar">
-            <div class="sidebar-brand">
-                <div class="brand-mark">ME</div>
-            </div>
             <nav class="sidebar-nav">
                 <a href="{{ url_for('home') }}" class="nav-item {% if request.endpoint == 'home' or (request.endpoint == 'dashboard' and not request.query_string) %}active{% endif %}" title="Home">
-                    <span class="nav-icon">🏠</span>
+                    <span class="nav-icon"><i data-lucide="home"></i></span>
                 </a>
                 <a href="{{ url_for('dashboard') }}#movieSections" class="nav-item" title="Explore">
-                    <span class="nav-icon">🎬</span>
+                    <span class="nav-icon"><i data-lucide="clapperboard"></i></span>
                 </a>
                 {% if is_admin %}
                     <a href="{{ url_for('admin_dashboard') }}" class="nav-item {% if request.endpoint == 'admin_dashboard' %}active{% endif %}" title="Admin Control">
-                        <span class="nav-icon">🛡️</span>
+                        <span class="nav-icon"><i data-lucide="shield-check"></i></span>
                     </a>
                 {% endif %}
             </nav>
             <div class="sidebar-footer">
                 {% if is_logged_in or is_admin %}
                     <a href="{{ url_for('logout') if not is_admin else url_for('admin_logout') }}" class="nav-item" title="Sign Out">
-                        <span class="nav-icon">🚪</span>
+                        <span class="nav-icon"><i data-lucide="log-out"></i></span>
                     </a>
                 {% else %}
                     <a href="{{ url_for('login') }}" class="nav-item" title="Sign In">
-                        <span class="nav-icon">👤</span>
+                        <span class="nav-icon"><i data-lucide="user"></i></span>
                     </a>
                 {% endif %}
             </div>
@@ -88,35 +86,33 @@
             <main class="main-scroller">
                 {% block content %}{% endblock %}
                 
-                <footer class="app-footer">
-                    <p>&copy; {{ current_year }} MovieStream Elite • Digital Cinema Experience</p>
-                </footer>
+
             </main>
         </div>
 
         <!-- Mobile Bottom Tab Bar -->
         <nav class="mobile-tabs">
             <a href="{{ url_for('dashboard') }}" class="tab-item {% if request.endpoint == 'dashboard' %}active{% endif %}">
-                <span class="tab-icon">🏠</span>
+                <span class="tab-icon"><i data-lucide="home"></i></span>
                 <span>Home</span>
             </a>
             <a href="{{ url_for('dashboard') }}#movieSections" class="tab-item">
-                <span class="tab-icon">🎬</span>
+                <span class="tab-icon"><i data-lucide="clapperboard"></i></span>
                 <span>Explore</span>
             </a>
             {% if is_admin %}
                 <a href="{{ url_for('admin_dashboard') }}" class="tab-item {% if request.endpoint == 'admin_dashboard' %}active{% endif %}">
-                    <span class="tab-icon">🛡️</span>
+                    <span class="tab-icon"><i data-lucide="shield-check"></i></span>
                     <span>Admin</span>
                 </a>
             {% elif is_logged_in %}
                 <a href="{{ url_for('logout') }}" class="tab-item">
-                    <span class="tab-icon">🚪</span>
+                    <span class="tab-icon"><i data-lucide="log-out"></i></span>
                     <span>Logout</span>
                 </a>
             {% else %}
                 <a href="{{ url_for('login') }}" class="tab-item">
-                    <span class="tab-icon">👤</span>
+                    <span class="tab-icon"><i data-lucide="user"></i></span>
                     <span>Login</span>
                 </a>
             {% endif %}
@@ -126,6 +122,7 @@
     <script>
         // Auto-dismiss Flash Messages
         document.addEventListener('DOMContentLoaded', () => {
+            lucide.createIcons();
             const flashes = document.querySelectorAll('.flash');
             flashes.forEach(f => {
                 setTimeout(() => {

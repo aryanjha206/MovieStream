@@ -5,8 +5,8 @@
 {% block content %}
 <section class="dashboard-hero" style="min-height: 320px; padding: 60px 80px;">
     <div class="hero-content">
-        <span class="eyebrow" style="color: white; border-color: rgba(255,255,255,0.3);">System Administrator</span>
-        <h1 style="font-size: 48px; letter-spacing: -0.04em;">Catalog Operations</h1>
+        <span class="eyebrow" style="color: var(--mx-accent); border-color: var(--mx-border);">System Administrator</span>
+        <h1 style="font-size: 48px; letter-spacing: -0.04em; color: var(--mx-text);">Catalog Operations</h1>
         <p style="color: var(--mx-text-dim);">Manage your premium cinematic assets and platform taxonomy.</p>
     </div>
 </section>
@@ -26,7 +26,7 @@
                 </div>
                 <div class="form-group">
                     <label>Classification</label>
-                    <select name="category" id="movieCategory" required style="background: rgba(255,255,255,0.05); border: 1px solid var(--mx-border); padding: 16px 20px; border-radius: 14px; color: white; display: block; width: 100%; outline: none;">
+                    <select name="category" id="movieCategory" required style="background: var(--mx-bg-alt); border: 1px solid var(--mx-border); padding: 16px 20px; border-radius: 14px; color: var(--mx-text); display: block; width: 100%; outline: none;">
                         {% for category in categories %}
                             <option value="{{ category.name }}">{{ category.name }}</option>
                         {% endfor %}
@@ -48,7 +48,7 @@
 
             <div class="form-group">
                 <label>Narrative Summary (Optional)</label>
-                <textarea name="description" id="movieDescription" rows="4" placeholder="Briefly describe the cinematic experience..." style="background: rgba(255,255,255,0.05); border: 1px solid var(--mx-border); padding: 16px 20px; border-radius: 14px; color: white; font-family: inherit; font-size: 15px; outline: none;"></textarea>
+                <textarea name="description" id="movieDescription" rows="4" placeholder="Briefly describe the cinematic experience..." style="background: var(--mx-bg-alt); border: 1px solid var(--mx-border); padding: 16px 20px; border-radius: 14px; color: var(--mx-text); font-family: inherit; font-size: 15px; outline: none;"></textarea>
             </div>
 
             <div style="display: flex; align-items: center; justify-content: space-between; margin-top: 20px;">
@@ -58,7 +58,7 @@
                 </label>
                 
                 <div style="display: flex; gap: 16px;">
-                    <button type="button" id="resetMovieForm" class="btn-elite" style="background: rgba(255,255,255,0.05); color: white; border: 1px solid var(--mx-border); box-shadow: none;">Discard</button>
+                    <button type="button" id="resetMovieForm" class="btn-elite" style="background: var(--mx-bg-alt); color: var(--mx-text); border: 1px solid var(--mx-border); box-shadow: none;">Discard</button>
                     <button type="submit" class="btn-elite" id="movieSubmitButton">Deploy Asset</button>
                 </div>
             </div>

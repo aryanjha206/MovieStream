@@ -3,22 +3,34 @@
 {% block title %}Dashboard | MovieStream Elite{% endblock %}
 
 {% block content %}
+{% set spotlight = sections.pop('Trending Now', []) %}
+
 <section class="dashboard-hero">
-    <div class="hero-content">
-        <span class="eyebrow">Premium Theater</span>
-        <h1>Cinema Excellence <br>At Your Fingertips</h1>
-        <p>Welcome back, <strong>{{ current_user_name }}</strong>. Discover the latest blockbusters and premium originals in 4K HDR quality.</p>
+    <div class="hero-content spotlight-layout">
+        <div class="spotlight-text">
+            <span class="eyebrow" style="color: var(--mx-accent);">Featured for you</span>
+            <h1 style="font-size: 48px; margin-bottom: 24px;">Spotlight <br>Selection</h1>
+            
+            <form class="toolbar" method="get" action="{{ url_for('dashboard') }}" style="margin-top: 40px;">
+                <input type="search" name="q" placeholder="Search elite catalog..." value="{{ search_term }}">
+                <button type="submit" class="button-apply">Search</button>
+            </form>
+        </div>
         
-        <form class="toolbar" method="get" action="{{ url_for('dashboard') }}">
-            <input type="search" name="q" placeholder="What are you looking for?" value="{{ search_term }}">
-            <select name="category">
-                <option value="">All Genres</option>
-                {% for category in categories %}
-                    <option value="{{ category }}" {% if category == selected_category %}selected{% endif %}>{{ category }}</option>
+        <div class="spotlight-posters">
+            {% if spotlight %}
+                {% for movie in spotlight[:3] %}
+                    <div class="spotlight-card" onclick="window.location.href='#movie-{{ movie.id }}'">
+                        <img src="{{ movie.thumbnail }}" alt="{{ movie.title }}">
+                        <div class="card-glow"></div>
+                    </div>
                 {% endfor %}
-            </select>
-            <button type="submit" class="button-apply">Search</button>
-        </form>
+            {% else %}
+                <div class="spotlight-placeholder">
+                    <p>Discover new originals</p>
+                </div>
+            {% endif %}
+        </div>
     </div>
 </section>
 
@@ -73,7 +85,7 @@
 <div class="player-modal" id="playerModal">
     <div class="player-header">
         <div class="player-copy">
-            <h2 id="playerTitle" style="color: white; font-size: 28px; font-weight: 900; letter-spacing: -0.02em;">Loading...</h2>
+            <h2 id="playerTitle" style="color: var(--mx-text); font-size: 28px; font-weight: 900; letter-spacing: -0.02em;">Loading...</h2>
             <p id="playerMeta" style="color: var(--mx-accent); font-size: 14px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em;"></p>
         </div>
         <button type="button" class="close-player" id="closePlayer" aria-label="Exit Theater">✕</button>

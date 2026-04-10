@@ -1,131 +1,116 @@
 {% extends "base.html" %}
 
-{% block title %}MovieStream | Sign Up{% endblock %}
+{% block title %}Sign Up | MovieStream Premium{% endblock %}
 
 {% block content %}
 <section class="single-auth">
-    <div class="auth-panel glass" style="max-width: 800px;">
-        <span class="eyebrow">Join the Community</span>
-        <h1>Create Your Access</h1>
-        <p>Follow the simple steps to start streaming.</p>
+    <div class="auth-panel glass">
+        <span class="eyebrow" style="margin-bottom: 16px;">Guided Onboarding</span>
+        <h1 style="font-size: 32px; font-weight: 800; margin-bottom: 8px;">Create Account</h1>
+        <p style="color: var(--mx-text-dim); margin-bottom: 32px;">Join thousands of viewers in high-quality streaming.</p>
 
-        <div class="signup-progress" style="margin: 32px 0;">
-            <div class="signup-progress-bar" style="height: 6px; background: rgba(255,255,255,0.05); border-radius: 3px; overflow: hidden;">
-                <span
-                    class="signup-progress-fill"
-                    id="signupProgressFill"
-                    style="height: 100%; background: var(--gradient-primary); display: block; transition: width 0.4s ease; width: {{ (current_step / 6 * 100)|int }}%;"
-                ></span>
+        <div class="signup-progress">
+            <div class="signup-progress-bar">
+                <span class="signup-progress-fill" id="signupProgressFill" style="width: {{ (current_step / 6 * 100)|int }}%;"></span>
             </div>
-            <p id="signupStepLabel">Step by step setup</p>
+            <p id="signupStepLabel" style="font-size: 13px; font-weight: 700; color: var(--mx-accent); margin-top: 12px; text-transform: uppercase;">Initializing...</p>
         </div>
 
         <div class="signup-wizard" id="signupWizard" data-email-verified="{{ 'true' if email_verified else 'false' }}" data-current-step="{{ current_step }}">
+            <!-- STEP 1: Email -->
             <section class="signup-step {% if current_step == 1 %}active{% endif %}" data-step="1">
-                <div class="signup-card">
-                    <h2>Enter your email</h2>
-                    <p>We’ll send a verification code.</p>
-                    <form method="post" action="{{ url_for('signup_send_otp') }}" class="stack-form">
-                        <label>Email Address</label>
-                        <input
-                            type="email"
-                            name="email"
-                            value="{{ email }}"
-                            placeholder="you@example.com"
-                            {% if email_verified %}readonly{% endif %}
-                            required
-                        >
-                        <button type="submit" class="button button-primary">
-                            {% if email_verified %}Send Again{% else %}Send OTP{% endif %}
-                        </button>
-                    </form>
-                </div>
+                <form method="post" action="{{ url_for('signup_send_otp') }}" class="stack-form">
+                    <label>Email Address</label>
+                    <input
+                        type="email"
+                        name="email"
+                        value="{{ email }}"
+                        placeholder="e.g. name@domain.com"
+                        {% if email_verified %}readonly{% endif %}
+                        required
+                    >
+                    <button type="submit" class="button-apply" style="width: 100%;">
+                        {% if email_verified %}Resend Code{% else %}Send Verification OTP{% endif %}
+                    </button>
+                    <p style="font-size: 13px; color: var(--mx-text-dim); text-align: center;">We'll send a 6-digit secure code.</p>
+                </form>
             </section>
 
+            <!-- STEP 2: OTP -->
             <section class="signup-step {% if current_step == 2 %}active{% endif %}" data-step="2">
-                <div class="signup-card">
-                    <h2>Enter OTP</h2>
-                    <p>Use the 6-digit code from email.</p>
-                    <form method="post" action="{{ url_for('signup_verify_otp') }}" class="stack-form">
-                        <label>OTP Code</label>
-                        <input type="text" name="otp" maxlength="6" placeholder="123456" {% if email_verified %}disabled{% endif %} required>
-                        <div class="inline-actions">
-                            <button type="button" class="button button-ghost step-back">Back</button>
-                            <button type="submit" class="button button-primary" {% if email_verified %}disabled{% endif %}>
-                                {% if email_verified %}Verified{% else %}Verify OTP{% endif %}
-                            </button>
-                        </div>
-                    </form>
-                </div>
+                <form method="post" action="{{ url_for('signup_verify_otp') }}" class="stack-form">
+                    <label>Security Code</label>
+                    <input type="text" name="otp" maxlength="6" placeholder="000 000" style="text-align: center; font-size: 24px; letter-spacing: 8px;" required>
+                    <div class="inline-actions" style="display: grid; grid-template-columns: 1fr 2fr; gap: 12px; margin-top: 12px;">
+                        <button type="button" class="nav-btn step-back" style="background: rgba(255,255,255,0.05); padding: 14px; border-radius: var(--radius-md); text-align: center;">Back</button>
+                        <button type="submit" class="button-apply">Verify & Continue</button>
+                    </div>
+                </form>
             </section>
 
-            <form method="post" action="{{ url_for('signup_create_account') }}" class="stack-form signup-step-form" id="signupPasswordForm">
-                <section class="signup-step {% if current_step == 3 %}active{% endif %}" data-step="3">
-                    <div class="signup-card">
-                        <h2>What is your name?</h2>
-                        <input type="text" name="name" value="{{ name }}" placeholder="Your full name" required>
-                        <div class="inline-actions">
-                            <button type="button" class="button button-ghost step-back">Back</button>
-                            <button type="button" class="button button-primary step-next">Continue</button>
-                        </div>
+            <!-- Steps 3-6: Unified Profile Form -->
+            <form method="post" action="{{ url_for('signup_create_account') }}" class="stack-form" id="signupPasswordForm">
+                <!-- STEP 3: Identity -->
+                <section class="signup-step {% if current_step >= 3 %}active{% endif %}" data-step="3">
+                    <label>Full Name</label>
+                    <input type="text" name="name" value="{{ name }}" placeholder="Enter your full name" required>
+                    <div class="inline-actions" style="display: grid; grid-template-columns: 1fr 2fr; gap: 12px; margin-top: 12px;">
+                        <button type="button" class="nav-btn step-back" style="background: rgba(255,255,255,0.05); padding: 14px; border-radius: var(--radius-md); text-align: center;">Back</button>
+                        <button type="button" class="button-apply step-next">Continue</button>
                     </div>
                 </section>
 
-                <section class="signup-step {% if current_step == 4 %}active{% endif %}" data-step="4">
-                    <div class="signup-card">
-                        <h2>Enter your age</h2>
-                        <input type="number" name="age" min="18" value="{{ age }}" placeholder="18+" required>
-                        <div class="inline-actions">
-                            <button type="button" class="button button-ghost step-back">Back</button>
-                            <button type="button" class="button button-primary step-next">Continue</button>
-                        </div>
+                <!-- STEP 4: Age -->
+                <section class="signup-step" data-step="4">
+                    <label>How old are you?</label>
+                    <input type="number" name="age" min="18" value="{{ age }}" placeholder="18+" required>
+                    <p style="font-size: 13px; color: var(--mx-text-dim);">Minimum age requirement is 18 years.</p>
+                    <div class="inline-actions" style="display: grid; grid-template-columns: 1fr 2fr; gap: 12px; margin-top: 12px;">
+                        <button type="button" class="nav-btn step-back" style="background: rgba(255,255,255,0.05); padding: 14px; border-radius: var(--radius-md); text-align: center;">Back</button>
+                        <button type="button" class="button-apply step-next">Continue</button>
                     </div>
                 </section>
 
-                <section class="signup-step {% if current_step == 5 %}active{% endif %}" data-step="5">
-                    <div class="signup-card">
-                        <h2>Create your password</h2>
-                        <input type="password" name="password" minlength="8" placeholder="Minimum 8 characters" required>
-                        <label>Confirm Password</label>
-                        <input type="password" name="confirm_password" minlength="8" placeholder="Re-enter password" required>
-                        <div class="inline-actions">
-                            <button type="button" class="button button-ghost step-back">Back</button>
-                            <button type="button" class="button button-primary step-next">Continue</button>
-                        </div>
+                <!-- STEP 5: Security -->
+                <section class="signup-step" data-step="5">
+                    <label>Create Password</label>
+                    <input type="password" name="password" minlength="8" placeholder="At least 8 characters" required>
+                    <label>Confirm Password</label>
+                    <input type="password" name="confirm_password" minlength="8" placeholder="Repeat password" required>
+                    <div class="inline-actions" style="display: grid; grid-template-columns: 1fr 2fr; gap: 12px; margin-top: 12px;">
+                        <button type="button" class="nav-btn step-back" style="background: rgba(255,255,255,0.05); padding: 14px; border-radius: var(--radius-md); text-align: center;">Back</button>
+                        <button type="button" class="button-apply step-next">Continue</button>
                     </div>
                 </section>
 
-                <section class="signup-step {% if current_step == 6 %}active{% endif %}" data-step="6">
-                    <div class="signup-card">
-                        <h2>Accept Terms & Conditions</h2>
-                        <div class="verified-banner {% if email_verified %}active{% endif %}">
-                            Email status: <strong>{% if email_verified %}Verified{% else %}OTP verification pending{% endif %}</strong>
-                        </div>
+                <!-- STEP 6: Terms -->
+                <section class="signup-step" data-step="6">
+                    <div style="background: rgba(255,255,255,0.02); padding: 20px; border-radius: var(--radius-md); border: 1px solid var(--mx-border); margin-bottom: 24px;">
+                        <h4 style="margin-bottom: 12px; font-size: 14px; color: var(--mx-accent);">Access Agreement</h4>
+                        <ul style="font-size: 12px; color: var(--mx-text-dim); list-style: none; padding: 0; display: flex; flex-direction: column; gap: 8px;">
+                            <li>• I am at least 18 years old.</li>
+                            <li>• I accept MovieStream's terms and privacy policy.</li>
+                            <li>• I will use the service for personal viewing only.</li>
+                            <li>• Account details remain private and secure.</li>
+                        </ul>
+                    </div>
 
-                        <div class="terms-panel">
-                            <p>MovieStream is for users aged 18+.</p>
-                            <p>Keep your email, OTP, and password private.</p>
-                            <p>Catalog items and playback links may change or be removed at any time.</p>
-                            <p>Use the platform only for lawful personal viewing.</p>
-                            <p>Unauthorized access to user or admin areas is prohibited.</p>
-                            <p>Account details are stored only to support login, verification, and service operation.</p>
-                        </div>
+                    <label style="display: flex; align-items: flex-start; gap: 12px; cursor: pointer;">
+                        <input type="checkbox" name="accept_terms" required style="width: 20px; height: 20px; margin-top: 2px;">
+                        <span style="font-size: 13px;">I agree to the terms and verify my age.</span>
+                    </label>
 
-                        <label class="checkbox-row">
-                            <input type="checkbox" name="accept_terms" required>
-                            <span>I accept the Terms & Conditions and confirm that I am 18+.</span>
-                        </label>
-
-                        <div class="inline-actions">
-                            <button type="button" class="button button-ghost step-back">Back</button>
-                            <button type="submit" class="button button-primary">Create Account</button>
-                        </div>
+                    <div class="inline-actions" style="display: grid; grid-template-columns: 1fr 2fr; gap: 12px; margin-top: 24px;">
+                        <button type="button" class="nav-btn step-back" style="background: rgba(255,255,255,0.05); padding: 14px; border-radius: var(--radius-md); text-align: center;">Back</button>
+                        <button type="submit" class="button-apply">Establish Secure Access</button>
                     </div>
                 </section>
             </form>
         </div>
 
-        <p class="muted-copy">Already registered? <a href="{{ url_for('login') }}">Sign in</a></p>
+        <p style="text-align: center; margin-top: 32px; font-size: 14px; color: var(--mx-text-dim);">
+            Already have an account? <a href="{{ url_for('login') }}" style="color: var(--mx-accent); text-decoration: none; font-weight: 700;">Sign In</a>
+        </p>
     </div>
 </section>
 {% endblock %}

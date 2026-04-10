@@ -5,12 +5,12 @@ const stepLabel = document.getElementById("signupStepLabel");
 
 if (signupWizard) {
     const stepTitles = {
-        1: "Step 1 of 6: Enter your email",
-        2: "Step 2 of 6: Verify OTP",
-        3: "Step 3 of 6: Enter your name",
-        4: "Step 4 of 6: Enter your age",
-        5: "Step 5 of 6: Create password",
-        6: "Step 6 of 6: Accept terms",
+        1: "Verify Email",
+        2: "Verification OTP",
+        3: "Your Profile",
+        4: "Age Verification",
+        5: "Security Setup",
+        6: "Final Agreement",
     };
 
     const emailVerified = signupWizard.dataset.emailVerified === "true";
@@ -21,7 +21,13 @@ if (signupWizard) {
     function updateWizard(stepNumber) {
         currentStep = stepNumber;
         allSteps.forEach((step) => {
-            step.classList.toggle("active", Number(step.dataset.step) === stepNumber);
+            const stepNum = Number(step.dataset.step);
+            step.classList.toggle("active", stepNum === stepNumber);
+            
+            // Add animation classes
+            if (stepNum === stepNumber) {
+                step.style.animation = "slideUp 0.6s cubic-bezier(0.4, 0, 0.2, 1) forwards";
+            }
         });
 
         if (progressFill) {
@@ -29,28 +35,29 @@ if (signupWizard) {
         }
 
         if (stepLabel) {
-            stepLabel.textContent = stepTitles[stepNumber];
+            stepLabel.textContent = `Step ${stepNumber} of 6: ${stepTitles[stepNumber]}`;
         }
     }
 
     function validateStep(stepNumber) {
-        if (!signupForm) {
-            return true;
-        }
+        if (!signupForm) return true;
 
         if (stepNumber === 3) {
             const name = signupForm.querySelector('input[name="name"]');
-            return name.reportValidity();
+            if (name.value.trim().length < 2) {
+                name.setCustomValidity("Please enter your full name.");
+                return name.reportValidity();
+            }
+            name.setCustomValidity("");
+            return true;
         }
 
         if (stepNumber === 4) {
-            const age = signupForm.querySelector('input[name="age"]');
-            const ageValue = Number(age.value);
-            if (!age.reportValidity()) {
-                return false;
-            }
+            const ageInput = signupForm.querySelector('input[name="age"]');
+            const ageValue = Number(ageInput.value);
+            if (!ageInput.reportValidity()) return false;
             if (ageValue < 18) {
-                window.alert("You must be at least 18 years old to register.");
+                alert("Accessrestricted to users 18 and older.");
                 return false;
             }
             return true;
@@ -60,19 +67,23 @@ if (signupWizard) {
             const password = signupForm.querySelector('input[name="password"]');
             const confirmPassword = signupForm.querySelector('input[name="confirm_password"]');
 
-            if (!password.reportValidity() || !confirmPassword.reportValidity()) {
-                return false;
+            if (password.value.length < 8) {
+                password.setCustomValidity("Security requirement: 8+ characters.");
+                return password.reportValidity();
             }
+            password.setCustomValidity("");
 
             if (password.value !== confirmPassword.value) {
-                window.alert("Passwords do not match.");
-                return false;
+                confirmPassword.setCustomValidity("Passwords must match.");
+                return confirmPassword.reportValidity();
             }
+            confirmPassword.setCustomValidity("");
         }
 
         return true;
     }
 
+    // Step navigation
     signupWizard.querySelectorAll(".step-next").forEach((button) => {
         button.addEventListener("click", () => {
             if (validateStep(currentStep)) {
@@ -89,22 +100,18 @@ if (signupWizard) {
 
     if (signupForm) {
         signupForm.addEventListener("submit", (event) => {
-            const age = Number(signupForm.querySelector('input[name="age"]').value);
-            const password = signupForm.querySelector('input[name="password"]').value;
-            const confirmPassword = signupForm.querySelector('input[name="confirm_password"]').value;
-
-            if (age < 18) {
+            if (!validateStep(5)) {
                 event.preventDefault();
-                window.alert("You must be at least 18 years old to register.");
                 return;
             }
-
-            if (password !== confirmPassword) {
+            const termsBox = signupForm.querySelector('input[name="accept_terms"]');
+            if (!termsBox.checked) {
+                alert("Please agree to the terms to continue.");
                 event.preventDefault();
-                window.alert("Passwords do not match.");
             }
         });
     }
 
+    // Initialize
     updateWizard(initialStep);
 }

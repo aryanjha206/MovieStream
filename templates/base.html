@@ -2,61 +2,71 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="theme-color" content="#0b1626">
-    <meta name="description" content="MovieStream - Premium video streaming inspired by MX Player.">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#030712">
+    <meta name="description" content="MovieStream Elite - Premium 4K Cinematic Experience. Built for the modern viewer.">
+    
+    <!-- PWA & Mobile Icons -->
     <link rel="manifest" href="{{ url_for('static', filename='manifest.webmanifest') }}">
     <link rel="icon" href="{{ url_for('static', filename='icons/favicon.svg') }}" type="image/svg+xml">
     <link rel="apple-touch-icon" href="{{ url_for('static', filename='icons/icon-192.png') }}">
-    <title>{% block title %}MovieStream{% endblock %}</title>
+    
+    <title>{% block title %}MovieStream Elite{% endblock %}</title>
+    
+    <!-- Typography -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 <body class="{% block body_class %}{% endblock %}">
     <div class="app-shell">
         <header class="site-header">
             <a href="{{ url_for('home') }}" class="brand">
-                <div class="brand-mark">MX</div>
-                <span>MovieStream</span>
+                <div class="brand-mark">MS</div>
+                <span>MovieStream<span style="color: var(--mx-accent);">Elite</span></span>
             </a>
             <nav class="nav-links">
                 {% if is_admin %}
-                    <a href="{{ url_for('admin_dashboard') }}" class="nav-btn">Manage</a>
-                    <a href="{{ url_for('admin_logout') }}" class="nav-btn btn-danger">Exit</a>
+                    <a href="{{ url_for('admin_dashboard') }}" class="nav-btn {% if request.endpoint == 'admin_dashboard' %}active{% endif %}">Library</a>
+                    <a href="{{ url_for('admin_logout') }}" class="nav-btn" style="color: #ef4444;">Exit Admin</a>
                 {% elif is_logged_in %}
-                    <a href="{{ url_for('dashboard') }}" class="nav-btn active">Home</a>
-                    <a href="{{ url_for('logout') }}" class="nav-btn">Logout</a>
+                    <a href="{{ url_for('dashboard') }}" class="nav-btn {% if request.endpoint == 'dashboard' %}active{% endif %}">Explore</a>
+                    <a href="{{ url_for('logout') }}" class="nav-btn">Sign Out</a>
+                {% else %}
+                    <a href="{{ url_for('login') }}" class="nav-btn {% if request.endpoint == 'login' %}active{% endif %}">Sign In</a>
+                    <a href="{{ url_for('signup') }}" class="nav-btn btn-primary" style="background: var(--gradient-primary); color: white; padding: 10px 24px; border-radius: 999px;">Join Free</a>
                 {% endif %}
             </nav>
         </header>
 
-        <main>
-            {% with messages = get_flashed_messages(with_categories=true) %}
-                {% if messages %}
-                    <div class="flash-stack">
-                        {% for category, message in messages %}
-                            <div class="flash flash-{{ category }}">{{ message }}</div>
-                        {% endfor %}
-                    </div>
-                {% endif %}
-            {% endwith %}
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <div class="flash-stack">
+                    {% for category, message in messages %}
+                        <div class="flash flash-{{ category }}">{{ message }}</div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        {% endwith %}
+
+        <main id="mainContent">
             {% block content %}{% endblock %}
         </main>
         
         {% if is_logged_in or is_admin %}
         <nav class="mobile-nav">
-            <a href="{{ url_for('dashboard') }}" class="mobile-nav-item active">
+            <a href="{{ url_for('dashboard') }}" class="mobile-nav-item {% if request.endpoint == 'dashboard' %}active{% endif %}">
                 <span class="mobile-nav-icon">🏠</span>
                 <span>Home</span>
             </a>
-            <a href="#movieSections" class="mobile-nav-item">
+            <a href="{{ url_for('dashboard') }}#movieSections" class="mobile-nav-item">
                 <span class="mobile-nav-icon">🔍</span>
-                <span>Explore</span>
+                <span>Discover</span>
             </a>
             {% if is_admin %}
-                <a href="{{ url_for('admin_dashboard') }}" class="mobile-nav-item">
+                <a href="{{ url_for('admin_dashboard') }}" class="mobile-nav-item {% if request.endpoint == 'admin_dashboard' %}active{% endif %}">
                     <span class="mobile-nav-icon">⚙️</span>
                     <span>Admin</span>
                 </a>
@@ -69,7 +79,25 @@
         </nav>
         {% endif %}
     </div>
+
+    <!-- PWA Helper -->
     <script src="{{ url_for('static', filename='js/pwa.js') }}"></script>
+    
+    <!-- Auto-hide Flash Messages -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const flashes = document.querySelectorAll('.flash');
+            flashes.forEach(f => {
+                setTimeout(() => {
+                    f.style.opacity = '0';
+                    f.style.transform = 'translateX(20px)';
+                    f.style.transition = 'all 0.5s ease';
+                    setTimeout(() => f.remove(), 500);
+                }, 4000);
+            });
+        });
+    </script>
+    
     {% block scripts %}{% endblock %}
 </body>
 </html>

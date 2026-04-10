@@ -1,46 +1,53 @@
 {% extends "base.html" %}
 
-{% block title %}MovieStream | Dashboard{% endblock %}
+{% block title %}Dashboard | MovieStream Premium{% endblock %}
 
 {% block content %}
 <section class="dashboard-hero">
     <div class="hero-content">
-        <span class="eyebrow" style="color: var(--mx-accent); text-transform: uppercase; font-size: 14px; font-weight: 800; letter-spacing: 2px;">Featured Now</span>
-        <h1>Welcome, {{ current_user_name }}</h1>
-        <p style="color: var(--mx-text-dim); font-size: 18px; margin-bottom: 32px;">Discover and stream your favorite movies in high quality.</p>
+        <span class="eyebrow">Premium Access</span>
+        <h1>Universal Streaming <br>Redefined for You</h1>
+        <p style="color: var(--mx-text-dim); font-size: 18px; margin: 16px 0 32px; max-width: 480px;">
+            Enjoy {{ episodes_count if episodes_count else 'exclusive' }} titles in 4K resolution. 
+            Hello, {{ current_user_name }} – what are we watching today?
+        </p>
         
         <form class="toolbar" method="get" action="{{ url_for('dashboard') }}">
-            <input type="search" name="q" placeholder="Search for movies, actors, genres..." value="{{ search_term }}">
+            <input type="search" name="q" placeholder="Search titles, genres, actors..." value="{{ search_term }}">
             <select name="category">
-                <option value="">All Categories</option>
+                <option value="">All Library</option>
                 {% for category in categories %}
                     <option value="{{ category }}" {% if category == selected_category %}selected{% endif %}>{{ category }}</option>
                 {% endfor %}
             </select>
-            <button type="submit" class="button-apply">Find Movies</button>
+            <button type="submit" class="button-apply">Search</button>
         </form>
     </div>
 </section>
 
-<section id="movieSections">
+<div id="movieSections" style="position: relative;">
     {% if sections %}
         {% for section_name, movies in sections.items() %}
             <div class="content-block">
                 <div class="section-heading">
-                    <h2>{{ section_name }}</h2>
-                    <span class="count-badge">{{ movies|length }} title{% if movies|length != 1 %}s{% endif %}</span>
+                    <div style="display: flex; align-items: baseline; gap: 16px;">
+                        <h2>{{ section_name }}</h2>
+                        <span style="color: var(--mx-accent); font-weight: 800; font-size: 13px; text-transform: uppercase; letter-spacing: 1px;">
+                            {{ movies|length }} titles
+                        </span>
+                    </div>
                 </div>
                 <div class="movie-row">
                     {% for movie in movies %}
                         <article
-                            class="movie-card interactive"
+                            class="movie-card"
                             data-title="{{ movie.title }}"
                             data-category="{{ movie.category }}"
                             data-description="{{ movie.description }}"
                             data-embed="{{ movie.embed_url }}"
                             data-video="{{ movie.video_url }}"
                         >
-                            <img src="{{ movie.thumbnail }}" alt="{{ movie.title }}" onerror="this.src='https://placehold.co/600x900/13243a/ffffff?text={{ movie.title|urlencode }}'">
+                            <img src="{{ movie.thumbnail }}" alt="{{ movie.title }}" loading="lazy" onerror="this.src='https://placehold.co/600x900/0f172a/ffffff?text={{ movie.title|urlencode }}'">
                             <div class="movie-overlay">
                                 <div class="movie-card-body">
                                     <h3>{{ movie.title }}</h3>
@@ -53,27 +60,28 @@
             </div>
         {% endfor %}
     {% else %}
-        <div class="empty-state wide" style="text-align: center; padding: 100px 0;">
-            <div class="empty-icon" style="font-size: 64px; margin-bottom: 24px;">🎬</div>
-            <h2 style="font-size: 32px; margin-bottom: 12px;">No results found</h2>
-            <p style="color: var(--mx-text-dim); margin-bottom: 32px;">Try adjusting your search terms or filters.</p>
-            <a href="{{ url_for('dashboard') }}" class="button-apply" style="text-decoration: none; display: inline-block;">Browse All Titles</a>
+        <div class="empty-state wide" style="text-align: center; padding: 120px 0; background: var(--glass); border-radius: var(--radius-xl); border: 1px dashed var(--mx-border);">
+            <div style="font-size: 80px; margin-bottom: 32px; filter: grayscale(1); opacity: 0.5;">📼</div>
+            <h2 style="font-size: 32px; margin-bottom: 12px; font-weight: 800;">No titles found</h2>
+            <p style="color: var(--mx-text-dim); margin-bottom: 40px; font-size: 18px;">We couldn't find any matches for your current selection.</p>
+            <a href="{{ url_for('dashboard') }}" class="button-apply" style="text-decoration: none; display: inline-block;">Clear All Filters</a>
         </div>
     {% endif %}
-</section>
+</div>
 
+<!-- Premium Video Player Overlay -->
 <div class="player-modal" id="playerModal">
     <div class="player-header">
         <div class="player-copy">
-            <h2 id="playerTitle" style="color: white; font-size: 20px;">Now Playing</h2>
-            <p id="playerMeta" style="color: #cbd5e1; font-size: 14px;"></p>
+            <h2 id="playerTitle" style="color: white; font-size: 24px; font-weight: 800; margin-bottom: 4px;">Loading Title...</h2>
+            <p id="playerMeta" style="color: var(--mx-accent); font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px;"></p>
         </div>
-        <button type="button" class="close-player" id="closePlayer" aria-label="Close player">×</button>
+        <button type="button" class="close-player" id="closePlayer" aria-label="Exit theater mode">×</button>
     </div>
     <div class="player-panel">
         <div class="player-frame">
-            <iframe id="movieFrame" src="" title="Movie player" allowfullscreen></iframe>
-            <video id="movieVideo" controls hidden></video>
+            <iframe id="movieFrame" src="" title="Video Theater" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen hidden></iframe>
+            <video id="movieVideo" controls playsinline hidden></video>
         </div>
     </div>
 </div>

@@ -1,114 +1,132 @@
 {% extends "base.html" %}
 
-{% block title %}MovieStream | Admin Dashboard{% endblock %}
+{% block title %}Admin Control | MovieStream Elite{% endblock %}
 
 {% block content %}
-<section class="dashboard-hero">
-    <div>
-        <span class="eyebrow">Admin</span>
-        <h1>Manage catalog</h1>
-        <p>Movies, categories, and highlights.</p>
+<section class="dashboard-hero" style="min-height: 300px; padding: 60px 80px;">
+    <div class="hero-content">
+        <span class="eyebrow" style="background: rgba(255,255,255,0.1); color: white; border-color: rgba(255,255,255,0.2);">System Administrator</span>
+        <h1 style="font-size: 40px;">Library Management</h1>
+        <p style="color: rgba(255,255,255,0.6);">Curate, categorize, and deploy cinematic content.</p>
     </div>
 </section>
 
-<section class="admin-grid" style="display: grid; grid-template-columns: 1.2fr 0.8fr; gap: 32px;">
-    <div class="admin-card">
-        <h2 id="movieFormTitle" style="margin-bottom: 24px; font-size: 20px;">Upload Content</h2>
+<div class="admin-interface" style="display: grid; grid-template-columns: 1.4fr 0.6fr; gap: 40px; margin-top: -40px; position: relative; z-index: 10;">
+    <!-- Content Uploader -->
+    <div class="auth-panel glass" style="max-width: none;">
+        <h2 id="movieFormTitle" style="font-size: 20px; font-weight: 800; margin-bottom: 24px; display: flex; align-items: center; gap: 12px;">
+            <span style="width: 8px; height: 8px; background: var(--mx-accent); border-radius: 50%;"></span>
+            Upload Intelligence
+        </h2>
         <form method="post" action="{{ url_for('add_movie') }}" class="stack-form" id="movieForm">
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                <div class="form-group">
+                    <label>Title</label>
+                    <input type="text" name="title" id="movieTitle" placeholder="e.g. Inception (2010)" required>
+                </div>
+                <div class="form-group">
+                    <label>Category</label>
+                    <select name="category" id="movieCategory" required>
+                        {% for category in categories %}
+                            <option value="{{ category.name }}">{{ category.name }}</option>
+                        {% endfor %}
+                        <option value="Uncategorized">Uncategorized</option>
+                    </select>
+                </div>
+            </div>
+            
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                <div class="form-group">
+                    <label>Thumbnail URL</label>
+                    <input type="text" name="thumbnail" id="movieThumbnail" placeholder="https://..." required>
+                </div>
+                <div class="form-group">
+                    <label>Video URL / Embed</label>
+                    <input type="text" name="video_url" id="movieVideoUrl" placeholder="Direct link or YouTube/Vimeo" required>
+                </div>
+            </div>
+
             <div class="form-group">
-                <input type="text" name="title" id="movieTitle" placeholder="Video Title (e.g. Action Movie 2024)" required>
+                <label>Description (Optional)</label>
+                <textarea name="description" id="movieDescription" rows="3" placeholder="Summary of the content..."></textarea>
             </div>
-            <div class="form-group">
-                <select name="category" id="movieCategory" required>
-                    {% for category in categories %}
-                        <option value="{{ category.name }}">{{ category.name }}</option>
-                    {% endfor %}
-                    <option value="Uncategorized">Uncategorized</option>
-                </select>
-            </div>
-            <div class="form-group">
-                <input type="text" name="thumbnail" id="movieThumbnail" placeholder="Thumbnail Image URL" required>
-            </div>
-            <div class="form-group">
-                <input type="text" name="video_url" id="movieVideoUrl" placeholder="Direct Video URL or Embed Link" required>
-            </div>
-            <div class="form-group">
-                <textarea name="description" id="movieDescription" rows="3" placeholder="Write a short summary..."></textarea>
-            </div>
-            <div style="margin-bottom: 24px; display: flex; align-items: center; gap: 10px;">
-                <input type="checkbox" name="is_trending" id="movieTrending" style="width: 18px; height: 18px; margin-bottom: 0;">
-                <label for="movieTrending" style="font-size: 14px; font-weight: 600;">Feature on Home Page</label>
-            </div>
-            <div class="inline-actions" style="display: flex; gap: 12px;">
-                <button type="submit" class="button-primary" id="movieSubmitButton">Save Entry</button>
-                <button type="button" class="nav-btn" id="resetMovieForm" style="background: rgba(255,255,255,0.05); padding: 10px 20px; border-radius: 8px;">Clear</button>
+
+            <div style="display: flex; align-items: center; justify-content: space-between; margin-top: 10px;">
+                <label style="display: flex; align-items: center; gap: 12px; cursor: pointer;">
+                    <input type="checkbox" name="is_trending" id="movieTrending" style="width: 20px; height: 20px;">
+                    <span style="font-size: 14px; font-weight: 600;">Feature on Spotlight</span>
+                </label>
+                
+                <div style="display: flex; gap: 12px;">
+                    <button type="button" id="resetMovieForm" style="background: rgba(255,255,255,0.05); color: white; border: 1px solid var(--mx-border); padding: 12px 24px; border-radius: var(--radius-md); cursor: pointer; font-weight: 600;">Discard</button>
+                    <button type="submit" class="button-apply" id="movieSubmitButton">Deploy Content</button>
+                </div>
             </div>
         </form>
     </div>
 
-    <div class="admin-card">
-        <h2 style="margin-bottom: 24px; font-size: 20px;">Manage Categories</h2>
-        <form method="post" action="{{ url_for('add_category') }}" class="stack-form" style="display: flex; gap: 8px; margin-bottom: 24px;">
-            <input type="text" name="name" placeholder="Genre Name" required style="margin-bottom: 0; flex: 1;">
-            <button type="submit" class="button-primary" style="width: auto;">Add</button>
+    <!-- Category Manager -->
+    <div class="auth-panel glass" style="max-width: none;">
+        <h2 style="font-size: 20px; font-weight: 800; margin-bottom: 24px;">Taxonomy</h2>
+        <form method="post" action="{{ url_for('add_category') }}" class="stack-form" style="margin-bottom: 32px;">
+            <div style="display: flex; gap: 8px;">
+                <input type="text" name="name" placeholder="New Genre" required style="flex: 1;">
+                <button type="submit" class="button-apply" style="width: auto; padding: 0 20px;">+</button>
+            </div>
         </form>
-        <div class="chips-wrap" style="display: flex; flex-wrap: wrap; gap: 10px;">
+        
+        <div style="display: flex; flex-direction: column; gap: 8px;">
             {% for category in categories %}
-                <div class="category-chip" style="background: rgba(255,255,255,0.05); padding: 6px 12px; border-radius: 6px; display: flex; align-items: center; gap: 8px; border: 1px solid var(--mx-border);">
-                    <span style="font-size: 13px;">{{ category.name }}</span>
-                    <form method="post" action="{{ url_for('delete_category', category_id=category._id) }}" style="display: contents;">
-                        <button type="submit" style="background: transparent; border: none; color: #ef4444; font-weight: bold; cursor: pointer;">×</button>
+                <div style="background: rgba(255,255,255,0.03); padding: 12px 16px; border-radius: 10px; border: 1px solid var(--mx-border); display: flex; justify-content: space-between; align-items: center;">
+                    <span style="font-size: 14px; font-weight: 600;">{{ category.name }}</span>
+                    <form method="post" action="{{ url_for('delete_category', category_id=category._id) }}">
+                        <button type="submit" style="background: transparent; border: none; color: #ef4444; cursor: pointer; font-size: 18px;">&times;</button>
                     </form>
                 </div>
             {% endfor %}
         </div>
     </div>
-</section>
+</div>
 
-<section class="content-block">
-    <div class="header-with-action" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
-        <h2 style="font-size: 20px;">Library Catalog</h2>
-        <span style="background: var(--mx-accent); padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 700;">{{ movies|length }} Items</span>
+<section class="content-block" style="margin-top: 60px;">
+    <div class="section-heading">
+        <h2>Active Catalog</h2>
+        <span class="eyebrow" style="background: var(--mx-accent); color: white; border: none;">{{ movies|length }} Items Live</span>
     </div>
     
-    {% if movies %}
-        <div class="movie-row">
-            {% for movie in movies %}
-                <article class="movie-card" style="aspect-ratio: auto; height: 100%;">
-                    <img src="{{ movie.thumbnail }}" alt="{{ movie.title }}" onerror="this.src='https://placehold.co/600x900/13243a/ffffff?text={{ movie.title|urlencode }}'">
-                    <div class="movie-overlay" style="background: linear-gradient(0deg, rgba(0,0,0,0.9) 0%, transparent 100%);">
-                        <div class="movie-card-body">
-                            <h3 style="font-size: 14px; margin-bottom: 2px;">{{ movie.title }}</h3>
-                            <p style="font-size: 11px; margin-bottom: 12px;">{{ movie.category }}</p>
-                            <div class="admin-actions" style="display: flex; gap: 8px;">
-                                <button
-                                    type="button"
-                                    class="nav-btn edit-movie-trigger"
-                                    style="background: white; color: black; padding: 4px 10px; border-radius: 4px; font-size: 11px; flex: 1;"
-                                    data-id="{{ movie.id }}"
-                                    data-title="{{ movie.title }}"
-                                    data-category="{{ movie.category }}"
-                                    data-thumbnail="{{ movie.thumbnail }}"
-                                    data-video="{{ movie.video_url }}"
-                                    data-description="{{ movie.description }}"
-                                    data-trending="{{ 'true' if movie.is_trending else 'false' }}"
-                                >
-                                    Edit
-                                </button>
-                                <form method="post" action="{{ url_for('delete_movie', movie_id=movie.id) }}" style="flex: 1;" onsubmit="return confirm('Permanently remove this title?')">
-                                    <button type="submit" class="nav-btn" style="background: #ef4444; color: white; padding: 4px 10px; border-radius: 4px; font-size: 11px; width: 100%; border: none;">Remove</button>
-                                </form>
-                            </div>
+    <div class="movie-row">
+        {% for movie in movies %}
+            <article class="movie-card">
+                <img src="{{ movie.thumbnail }}" alt="{{ movie.title }}" onerror="this.src='https://placehold.co/600x900/0f172a/ffffff?text={{ movie.title|urlencode }}'">
+                <div class="movie-overlay" style="background: linear-gradient(0deg, rgba(3,7,18,1) 0%, rgba(3,7,18,0.4) 60%, transparent 100%);">
+                    <div class="movie-card-body">
+                        <h3 style="font-size: 16px;">{{ movie.title }}</h3>
+                        <p style="font-size: 11px; margin-bottom: 16px; opacity: 0.8;">{{ movie.category }}</p>
+                        
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+                            <button
+                                type="button"
+                                class="edit-movie-trigger"
+                                style="background: white; color: black; border: none; padding: 8px; border-radius: 6px; font-size: 11px; font-weight: 700; cursor: pointer;"
+                                data-id="{{ movie.id }}"
+                                data-title="{{ movie.title }}"
+                                data-category="{{ movie.category }}"
+                                data-thumbnail="{{ movie.thumbnail }}"
+                                data-video="{{ movie.video_url }}"
+                                data-description="{{ movie.description }}"
+                                data-trending="{{ 'true' if movie.is_trending else 'false' }}"
+                            >
+                                Edit
+                            </button>
+                            <form method="post" action="{{ url_for('delete_movie', movie_id=movie.id) }}" onsubmit="return confirm('Archive this content permanently?')">
+                                <button type="submit" style="background: #ef4444; color: white; border: none; padding: 8px; border-radius: 6px; font-size: 11px; font-weight: 700; width: 100%; cursor: pointer;">Delete</button>
+                            </form>
                         </div>
                     </div>
-                </article>
-            {% endfor %}
-        </div>
-    {% else %}
-        <div class="empty-state" style="padding: 60px; text-align: center; background: rgba(255,255,255,0.02); border-radius: 12px; border: 1px dashed var(--mx-border);">
-            <p style="color: var(--mx-text-dim);">Your catalog is empty. Upload your first video above.</p>
-        </div>
-    {% endif %}
+                </div>
+            </article>
+        {% endfor %}
+    </div>
 </section>
 {% endblock %}
 

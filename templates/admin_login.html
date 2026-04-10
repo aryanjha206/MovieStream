@@ -1,18 +1,24 @@
 {% extends "base.html" %}
 
-{% block title %}MovieStream | Admin{% endblock %}
+{% block title %}Admin Access | MovieStream Premium{% endblock %}
 
 {% block content %}
-<section class="single-auth" style="display: flex; justify-content: center; align-items: center; min-height: 80vh;">
-    <div class="auth-panel" style="width: 100%; max-width: 400px; padding: 40px; background: var(--mx-bg-alt); border-radius: var(--radius-lg);">
-        <h1 style="font-size: 28px; margin-bottom: 8px;">Admin Login</h1>
-        <p style="color: var(--mx-text-dim); margin-bottom: 32px;">Please enter your identification PIN.</p>
+<section class="single-auth">
+    <div class="auth-panel glass">
+        <span class="eyebrow" style="margin-bottom: 16px;">Security Gateway</span>
+        <h1 style="font-size: 32px; font-weight: 800; margin-bottom: 8px;">Admin Login</h1>
+        <p style="color: var(--mx-text-dim); margin-bottom: 32px;">Please enter your identification PIN to continue.</p>
+        
         <form method="post" action="{{ url_for('admin_login') }}" class="stack-form">
             <div class="form-group">
-                <input type="password" name="pin" placeholder="Enter PIN" required style="text-align: center; font-size: 24px; letter-spacing: 12px;">
+                <input type="password" name="pin" placeholder="••••" required style="text-align: center; font-size: 32px; letter-spacing: 12px; background: rgba(0,0,0,0.2);">
             </div>
-            <button type="submit" class="button-primary">Authorize</button>
+            <button type="submit" class="button-apply" style="width: 100%;">Authorize Session</button>
         </form>
+        
+        <p style="margin-top: 32px; text-align: center; font-size: 13px; color: var(--mx-text-dim);">
+            Restricted access portal for library management.
+        </p>
     </div>
 </section>
 {% endblock %}

@@ -8,21 +8,24 @@
 <section class="dashboard-hero">
     <div class="hero-content spotlight-layout">
         <div class="spotlight-text">
-            <span class="eyebrow" style="color: var(--mx-accent);">Featured for you</span>
-            <h1 style="font-size: 48px; margin-bottom: 24px;">Spotlight <br>Selection</h1>
-            
-            <form class="toolbar" method="get" action="{{ url_for('dashboard') }}" style="margin-top: 40px;">
-                <input type="search" name="q" placeholder="Search elite catalog..." value="{{ search_term }}">
-                <button type="submit" class="button-apply">Search</button>
-            </form>
+            <h1 id="heroTitle" style="font-size: 48px; margin-bottom: 8px;">Spotlight Selection</h1>
+            <p id="heroCategory" style="color: var(--mx-accent); font-weight: 800; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 24px;"></p>
+            <button type="button" class="btn-elite" id="heroPlayButton" style="padding: 16px 40px; font-size: 16px;">Watch Now</button>
         </div>
         
-        <div class="spotlight-posters">
+        <div class="spotlight-posters" id="spotlightContainer">
             {% if spotlight %}
-                {% for movie in spotlight[:3] %}
-                    <div class="spotlight-card" onclick="window.location.href='#movie-{{ movie.id }}'">
+                {% for movie in spotlight %}
+                    <div class="spotlight-card {% if loop.first %}active{% endif %}" 
+                         data-id="{{ movie.id }}"
+                         data-title="{{ movie.title }}"
+                         data-category="{{ movie.category }}"
+                         data-description="{{ movie.description }}"
+                         data-embed="{{ movie.embed_url }}"
+                         data-video="{{ movie.video_url }}"
+                         data-thumbnail="{{ movie.thumbnail }}"
+                    >
                         <img src="{{ movie.thumbnail }}" alt="{{ movie.title }}">
-                        <div class="card-glow"></div>
                     </div>
                 {% endfor %}
             {% else %}

@@ -53,33 +53,15 @@
 
         <div class="app-content">
             <header class="app-header">
-                <div class="header-left">
-                    <span class="page-title">
-                        {% if request.endpoint == 'dashboard' %}Discover Premium{% elif request.endpoint == 'admin_dashboard' %}Management Hub{% else %}MovieStream Elite{% endif %}
-                    </span>
-                </div>
-                <div class="header-right">
-                    <!-- Removed Get Started button before login as requested -->
-                    {% if is_logged_in or is_admin %}
-                        <div class="user-pill">
-                            <span class="user-avatar">{{ (current_user_name[0] if current_user_name else 'G')|upper }}</span>
-                            {% if current_user_name %}
-                                <span style="font-size: 13px; font-weight: 700; color: var(--mx-text);">{{ current_user_name }}</span>
-                            {% endif %}
-                        </div>
-                    {% endif %}
-                </div>
+                {% if is_logged_in or is_admin %}
+                    <form class="toolbar" method="get" action="{{ url_for('dashboard') }}">
+                        <input type="search" name="q" placeholder="Search elite catalog..." value="{{ search_term if search_term else '' }}">
+                        <button type="submit" class="button-apply">Search</button>
+                    </form>
+                {% endif %}
             </header>
 
-            {% with messages = get_flashed_messages(with_categories=true) %}
-                {% if messages %}
-                    <div class="flash-stack">
-                        {% for category, message in messages %}
-                            <div class="flash flash-{{ category }}">{{ message }}</div>
-                        {% endfor %}
-                    </div>
-                {% endif %}
-            {% endwith %}
+            <!-- Notifications disabled as requested -->
 
             <main class="main-scroller">
                 {% block content %}{% endblock %}

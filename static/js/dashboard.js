@@ -46,6 +46,43 @@ document.addEventListener("DOMContentLoaded", () => {
         card.addEventListener("click", () => openPlayer(card));
     });
 
+    // Spotlight Rotation Logic
+    const spotlightCards = document.querySelectorAll(".spotlight-card");
+    const heroTitle = document.getElementById("heroTitle");
+    const heroCategory = document.getElementById("heroCategory");
+    const heroPlayButton = document.getElementById("heroPlayButton");
+    let currentSpotlightIndex = 0;
+
+    function updateSpotlight(index) {
+        if (spotlightCards.length === 0) return;
+        
+        spotlightCards.forEach(c => c.classList.remove("active"));
+        const card = spotlightCards[index];
+        card.classList.add("active");
+
+        if (heroTitle) heroTitle.textContent = card.dataset.title;
+        if (heroCategory) heroCategory.textContent = card.dataset.category;
+        
+        // Update Hero Background
+        const heroSection = document.querySelector(".dashboard-hero");
+        if (heroSection && card.dataset.thumbnail) {
+            heroSection.style.setProperty("--hero-bg", `url('${card.dataset.thumbnail}')`);
+        }
+        
+        // Update Play Button behavior
+        if (heroPlayButton) {
+            heroPlayButton.onclick = () => openPlayer(card);
+        }
+    }
+
+    if (spotlightCards.length > 0) {
+        updateSpotlight(0);
+        setInterval(() => {
+            currentSpotlightIndex = (currentSpotlightIndex + 1) % spotlightCards.length;
+            updateSpotlight(currentSpotlightIndex);
+        }, 3000); // 3-second cycle
+    }
+
     if (closePlayer) {
         closePlayer.addEventListener("click", stopPlayer);
     }

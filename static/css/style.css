@@ -95,7 +95,7 @@ body {
 /* Sidebar Styling */
 .app-sidebar {
     width: var(--sidebar-width);
-    background: rgba(2, 6, 23, 0.8);
+    background: var(--mx-bg);
     border-right: 1px solid var(--mx-border);
     display: flex;
     flex-direction: column;
@@ -162,18 +162,31 @@ body {
     transition: var(--transition-base);
     background: transparent;
     position: relative;
+    font-size: 22px;
 }
 
 .nav-item:hover {
-    color: var(--mx-text);
+    color: var(--mx-accent);
     background: var(--mx-bg-alt);
-    transform: translateY(-2px);
+    transform: translateX(4px);
 }
 
 .nav-item.active {
     color: white;
     background: var(--mx-accent-gradient);
-    box-shadow: 0 8px 20px var(--mx-accent-glow);
+    box-shadow: 0 8px 16px var(--mx-accent-glow);
+}
+
+.nav-item.active::after {
+    content: '';
+    position: absolute;
+    right: -17px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 4px;
+    height: 32px;
+    background: var(--mx-accent);
+    border-radius: 4px 0 0 4px;
 }
 
 .nav-item .nav-icon {
@@ -289,7 +302,7 @@ body {
     content: '';
     position: absolute;
     inset: 0;
-    background: linear-gradient(90deg, #020617 30%, transparent 100%),
+    background: linear-gradient(90deg, white 20%, rgba(255,255,255,0.4) 60%, transparent 100%),
                 url('https://images.unsplash.com/photo-1626814026160-2237a95fc5a0?q=80&w=1200') center/cover;
     z-index: -1;
 }
@@ -473,7 +486,7 @@ body {
 .player-modal {
     position: fixed;
     inset: 0;
-    background: rgba(2, 6, 23, 0.95);
+    background: var(--mx-bg);
     backdrop-filter: blur(20px);
     display: none;
     flex-direction: column;
@@ -502,9 +515,9 @@ body {
     width: 50px;
     height: 50px;
     border-radius: 50%;
-    background: rgba(255,255,255,0.1);
+    background: var(--mx-bg-alt);
     border: 1px solid var(--mx-border);
-    color: white;
+    color: var(--mx-text);
     font-size: 24px;
     cursor: pointer;
     transition: var(--transition-fast);
@@ -606,7 +619,7 @@ body {
     left: 0;
     right: 0;
     height: 80px;
-    background: rgba(2, 6, 23, 0.8);
+    background: var(--mx-bg);
     backdrop-filter: blur(20px);
     border-top: 1px solid var(--mx-border);
     z-index: 2000;

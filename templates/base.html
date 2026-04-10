@@ -17,91 +17,108 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@700;800&display=swap" rel="stylesheet">
     
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
-    
-    <style>
-        /* Extra dynamic glow effects */
-        .glow-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-            background: radial-gradient(circle at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(59, 130, 246, 0.03) 0%, transparent 60%);
-            z-index: 9999;
-        }
-    </style>
 </head>
 <body class="{% block body_class %}{% endblock %}">
     <div class="glow-overlay" id="glowOverlay"></div>
     
-    <div class="app-shell">
-        <header class="site-header">
-            <a href="{{ url_for('home') }}" class="brand">
+    <!-- App Shell Container -->
+    <div class="app-container">
+        <!-- Persistent Side Navigation (App Style) -->
+        <aside class="app-sidebar">
+            <div class="sidebar-brand">
                 <div class="brand-mark">ME</div>
-                <span style="font-family: 'Plus Jakarta Sans', sans-serif;">MovieStream<span style="color: var(--mx-accent);">Elite</span></span>
-            </a>
-            <nav class="nav-links">
+            </div>
+            <nav class="sidebar-nav">
+                <a href="{{ url_for('home') }}" class="nav-item {% if request.endpoint == 'dashboard' %}active{% endif %}" title="Home">
+                    <span class="nav-icon">🏠</span>
+                </a>
+                <a href="{{ url_for('dashboard') }}#movieSections" class="nav-item" title="Explore">
+                    <span class="nav-icon">🛰️</span>
+                </a>
                 {% if is_admin %}
-                    <a href="{{ url_for('admin_dashboard') }}" class="nav-btn {% if request.endpoint == 'admin_dashboard' %}active{% endif %}">Catalog</a>
-                    <a href="{{ url_for('admin_logout') }}" class="nav-btn" style="color: #ef4444;">Logout Admin</a>
-                {% elif is_logged_in %}
-                    <a href="{{ url_for('dashboard') }}" class="nav-btn {% if request.endpoint == 'dashboard' %}active{% endif %}">Home</a>
-                    <a href="{{ url_for('logout') }}" class="nav-btn">Sign Out</a>
-                {% else %}
-                    <a href="{{ url_for('login') }}" class="nav-btn">Sign In</a>
-                    <a href="{{ url_for('signup') }}" class="nav-btn btn-primary">Join Free</a>
+                    <a href="{{ url_for('admin_dashboard') }}" class="nav-item {% if request.endpoint == 'admin_dashboard' %}active{% endif %}" title="Admin">
+                        <span class="nav-icon">⚙️</span>
+                    </a>
                 {% endif %}
             </nav>
-        </header>
+            <div class="sidebar-footer">
+                {% if is_logged_in or is_admin %}
+                    <a href="{{ url_for('logout') if not is_admin else url_for('admin_logout') }}" class="nav-item" title="Logout">
+                        <span class="nav-icon">🚪</span>
+                    </a>
+                {% else %}
+                    <a href="{{ url_for('login') }}" class="nav-item" title="Login">
+                        <span class="nav-icon">👤</span>
+                    </a>
+                {% endif %}
+            </div>
+        </aside>
 
-        {% with messages = get_flashed_messages(with_categories=true) %}
-            {% if messages %}
-                <div class="flash-stack">
-                    {% for category, message in messages %}
-                        <div class="flash flash-{{ category }}">{{ message }}</div>
-                    {% endfor %}
+        <div class="app-content">
+            <header class="app-header">
+                <div class="header-left">
+                    <span class="page-title">{% if request.endpoint == 'dashboard' %}Discover{% elif request.endpoint == 'admin_dashboard' %}Library Center{% else %}MovieStream Elite{% endif %}</span>
                 </div>
-            {% endif %}
-        {% endwith %}
+                <div class="header-right">
+                    {% if not is_logged_in and not is_admin %}
+                        <a href="{{ url_for('signup') }}" class="btn-elite">Start Free</a>
+                    {% endif %}
+                    <div class="user-pill">
+                        <span class="user-avatar">{{ (current_user_name[0] if current_user_name else 'G')|upper }}</span>
+                    </div>
+                </div>
+            </header>
 
-        <main id="mainContent" style="min-height: 70vh;">
-            {% block content %}{% endblock %}
-        </main>
-        
-        <footer style="margin-top: 100px; padding: 40px 0; border-top: 1px solid var(--mx-border); text-align: center;">
-            <p style="color: var(--mx-text-muted); font-size: 14px;">&copy; {{ current_year }} MovieStream Elite. Powered by advanced cinematic tech.</p>
-        </footer>
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    <div class="flash-stack">
+                        {% for category, message in messages %}
+                            <div class="flash flash-{{ category }}">{{ message }}</div>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            {% endwith %}
 
-        {% if is_logged_in or is_admin or request.endpoint == 'login' %}
-        <nav class="mobile-nav">
-            <a href="{{ url_for('dashboard') }}" class="mobile-nav-item {% if request.endpoint == 'dashboard' %}active{% endif %}">
-                <span class="mobile-nav-icon">🏠</span>
+            <main class="main-scroller">
+                {% block content %}{% endblock %}
+                
+                <footer class="app-footer">
+                    <p>&copy; {{ current_year }} MovieStream Elite • Version 2.0.4</p>
+                </footer>
+            </main>
+        </div>
+
+        <!-- Mobile Bottom Tab Bar -->
+        <nav class="mobile-tabs">
+            <a href="{{ url_for('dashboard') }}" class="tab-item {% if request.endpoint == 'dashboard' %}active{% endif %}">
+                <span class="tab-icon">🏠</span>
                 <span>Home</span>
             </a>
-            <a href="{{ url_for('dashboard') }}#movieSections" class="mobile-nav-item">
-                <span class="mobile-nav-icon">🛰️</span>
+            <a href="{{ url_for('dashboard') }}#movieSections" class="tab-item">
+                <span class="tab-icon">🛰️</span>
                 <span>Explore</span>
             </a>
             {% if is_admin %}
-                <a href="{{ url_for('admin_dashboard') }}" class="mobile-nav-item {% if request.endpoint == 'admin_dashboard' %}active{% endif %}">
-                    <span class="mobile-nav-icon">⚙️</span>
+                <a href="{{ url_for('admin_dashboard') }}" class="tab-item {% if request.endpoint == 'admin_dashboard' %}active{% endif %}">
+                    <span class="tab-icon">⚙️</span>
                     <span>Admin</span>
                 </a>
-            {% else %}
-                <a href="{{ url_for('logout') }}" class="mobile-nav-item">
-                    <span class="mobile-nav-icon">👤</span>
+            {% elif is_logged_in %}
+                <a href="{{ url_for('logout') }}" class="tab-item">
+                    <span class="tab-icon">🚪</span>
                     <span>Exit</span>
+                </a>
+            {% else %}
+                <a href="{{ url_for('login') }}" class="tab-item">
+                    <span class="tab-icon">👤</span>
+                    <span>Sign In</span>
                 </a>
             {% endif %}
         </nav>
-        {% endif %}
     </div>
 
     <script src="{{ url_for('static', filename='js/pwa.js') }}"></script>
-    
     <script>
-        // Interactive glow effect
         document.addEventListener('mousemove', (e) => {
             const overlay = document.getElementById('glowOverlay');
             if (overlay) {
@@ -112,20 +129,17 @@
             }
         });
 
-        // Flash manager
         document.addEventListener('DOMContentLoaded', () => {
             const flashes = document.querySelectorAll('.flash');
             flashes.forEach(f => {
                 setTimeout(() => {
                     f.style.opacity = '0';
                     f.style.transform = 'translateY(-20px)';
-                    f.style.transition = 'all 0.6s cubic-bezier(0.4, 0, 0.2, 1)';
                     setTimeout(() => f.remove(), 600);
                 }, 4000);
             });
         });
     </script>
-    
     {% block scripts %}{% endblock %}
 </body>
 </html>

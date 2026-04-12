@@ -1,0 +1,123 @@
+{% extends "base.html" %}
+
+{% block title %}Account Identity | MovieStream Elite{% endblock %}
+
+{% block content %}
+<section class="dashboard-hero" style="min-height: 320px; display: flex; align-items: flex-end; padding-bottom: 50px;">
+    <div class="hero-content reveal" style="display: flex; align-items: center; gap: 30px; width: 100%;">
+        <div class="profile-avatar-large">
+            {{ user.name[0].upper() if user.name else 'U' }}
+        </div>
+        <div>
+            <span class="eyebrow accent-text" style="letter-spacing: 0.3em;">ELITE MEMBERSHIP</span>
+            <h1 class="hero-title" style="margin: 5px 0 10px 0;">{{ user.name }}</h1>
+            <div style="display: flex; gap: 20px; align-items: center;">
+                <span style="font-size: 13px; color: var(--mx-text-dim); display: flex; align-items: center; gap: 6px;">
+                    <i data-lucide="mail" style="width: 14px;"></i> {{ user.email }}
+                </span>
+                <span style="width: 4px; height: 4px; background: var(--mx-border); border-radius: 50%;"></span>
+                <span style="font-size: 13px; color: var(--mx-text-dim); display: flex; align-items: center; gap: 6px;">
+                    <i data-lucide="calendar" style="width: 14px;"></i> Joined {{ user.created_at.strftime('%B %Y') if user.created_at else 'Verified' }}
+                </span>
+            </div>
+        </div>
+    </div>
+</section>
+
+<div class="grid-layout" style="margin-top: -60px; grid-template-columns: 1fr 350px; gap: 40px;">
+    <!-- Main Settings -->
+    <div class="auth-panel wide-panel reveal" style="background: var(--mx-bg-glass); backdrop-filter: blur(50px) saturate(180%); border: 1px solid var(--mx-border);">
+        <h2 class="panel-title" style="margin-bottom: 40px; display: flex; align-items: center; gap: 15px;">
+            <i data-lucide="settings-2" style="color: var(--mx-accent);"></i> Account Settings
+        </h2>
+        
+        <form method="post" action="{{ url_for('profile') }}" class="stack-form">
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 25px;">
+                <div class="form-group">
+                    <label>Public Name</label>
+                    <input type="text" name="name" value="{{ user.name }}" placeholder="Enter your name" required>
+                </div>
+                <div class="form-group">
+                    <label>Account Age</label>
+                    <input type="text" value="{{ user.age }} Years" disabled style="opacity: 0.6; cursor: not-allowed; background: var(--mx-bg-alt);">
+                </div>
+            </div>
+            
+            <div class="form-group" style="margin-top: 20px;">
+                <label>Email Address</label>
+                <input type="email" value="{{ user.email }}" disabled style="opacity: 0.6; cursor: not-allowed; background: var(--mx-bg-alt);">
+                <span style="font-size: 11px; color: var(--mx-text-muted); margin-top: 8px; display: block;">Contact support to modify verified identity.</span>
+            </div>
+
+            <div style="margin-top: 40px; padding-top: 30px; border-top: 1px solid var(--mx-border);">
+                <h3 style="font-size: 14px; font-weight: 800; margin-bottom: 25px; display: flex; align-items: center; gap: 10px;">
+                    <i data-lucide="lock" style="width: 16px;"></i> Credentials
+                </h3>
+                <div class="form-group">
+                    <label>New Security PIN / Password</label>
+                    <input type="password" name="new_password" placeholder="Leave blank to maintain current encryption">
+                </div>
+            </div>
+
+            <div style="margin-top: 40px; display: flex; gap: 15px;">
+                <button type="submit" class="btn-elite" style="padding: 18px 48px; border-radius: var(--radius-md); box-shadow: var(--shadow-glow);">Protocol Synchronize</button>
+                <a href="{{ url_for('logout') }}" class="btn-elite" style="background: rgba(239, 68, 68, 0.08); color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.15); font-weight: 700;">Terminate Session</a>
+            </div>
+        </form>
+    </div>
+
+    <!-- Sidebar Stats -->
+    <div class="reveal">
+        <div class="auth-panel" style="background: var(--mx-accent-gradient); border: none; color: white;">
+            <h3 style="font-size: 12px; font-weight: 800; letter-spacing: 0.15em; margin-bottom: 15px; opacity: 0.8;">CURRENT STATUS</h3>
+            <h2 style="font-size: 28px; font-weight: 900; margin-bottom: 25px;">Elite Member</h2>
+            <div style="background: rgba(255,255,255,0.15); border-radius: 12px; padding: 15px; display: flex; align-items: center; gap: 12px;">
+                <i data-lucide="zap" style="width: 18px; fill: white;"></i>
+                <span style="font-size: 13px; font-weight: 700;">Pro Stream Enabled</span>
+            </div>
+        </div>
+
+        <div class="auth-panel" style="margin-top: 20px; background: var(--mx-bg-glass); border: 1px solid var(--mx-border);">
+            <h3 style="font-size: 14px; font-weight: 800; margin-bottom: 20px;">Security Snapshot</h3>
+            <div style="display: flex; flex-direction: column; gap: 15px;">
+                <div style="display: flex; align-items: center; justify-content: space-between; font-size: 13px;">
+                    <span style="color: var(--mx-text-dim);">Identity Ver.</span>
+                    <span style="color: var(--mx-accent); font-weight: 800;">ACTIVE</span>
+                </div>
+                <div style="display: flex; align-items: center; justify-content: space-between; font-size: 13px;">
+                    <span style="color: var(--mx-text-dim);">Last Update</span>
+                    <span style="color: var(--mx-text-muted);">{{ user.updated_at.strftime('%d/%m/%y') if user.updated_at else 'Original' }}</span>
+                </div>
+                <div style="height: 1px; background: var(--mx-border); margin: 5px 0;"></div>
+                <button class="nav-item" style="width: 100%; height: auto; padding: 14px; justify-content: space-between; font-size: 13px; font-weight: 700; border: 1px solid var(--mx-border); background: var(--mx-bg-alt);">
+                    Data Privacy <i data-lucide="chevron-right" style="width: 16px;"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.profile-avatar-large {
+    width: 120px;
+    height: 120px;
+    background: var(--mx-accent-gradient);
+    border-radius: 35px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 48px;
+    font-weight: 900;
+    color: white;
+    box-shadow: 0 20px 40px var(--mx-accent-glow);
+    border: 4px solid var(--mx-bg);
+}
+
+@media (max-width: 1024px) {
+    .grid-layout {
+        grid-template-columns: 1fr !important;
+        margin-top: -30px !important;
+    }
+}
+</style>
+{% endblock %}

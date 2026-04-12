@@ -8,9 +8,18 @@
 <section class="dashboard-hero">
     <div class="hero-content spotlight-layout">
         <div class="spotlight-text">
-            <h1 id="heroTitle" style="font-size: 48px; margin-bottom: 8px;">Spotlight Selection</h1>
-            <p id="heroCategory" style="color: var(--mx-accent); font-weight: 800; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 24px;"></p>
-            <button type="button" class="btn-elite" id="heroPlayButton" style="padding: 16px 40px; font-size: 16px;">Watch Now</button>
+            <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 20px;">
+                <span style="background: #ef4444; color: white; padding: 4px 12px; border-radius: 6px; font-size: 11px; font-weight: 800; letter-spacing: 0.1em; display: flex; align-items: center; gap: 6px;">
+                    <span style="width: 6px; height: 6px; background: white; border-radius: 50%; display: block; animation: pulse 1.5s infinite;"></span> LIVE NOW
+                </span>
+                <span style="color: rgba(255,255,255,0.8); font-size: 13px; font-weight: 700; letter-spacing: 0.05em;">ELITE ORIGINAL</span>
+            </div>
+            <h1 id="heroTitle" style="font-size: clamp(32px, 5vw, 64px); line-height: 1.1; margin-bottom: 15px; font-weight: 900; filter: drop-shadow(0 0 20px rgba(0,0,0,0.5));">Spotlight Selection</h1>
+            <p id="heroCategory" style="color: var(--mx-accent); font-weight: 900; text-transform: uppercase; letter-spacing: 0.2em; margin-bottom: 30px; font-size: 14px;"></p>
+            <div style="display: flex; gap: 15px; align-items: center;">
+                <button type="button" class="btn-elite" id="heroPlayButton" style="padding: 20px 48px; font-size: 16px; border-radius: var(--radius-md); box-shadow: var(--shadow-glow);">Watch Now</button>
+                <button type="button" class="btn-elite" style="background: rgba(255,255,255,0.1); backdrop-filter: blur(10px); color: white; border: 1px solid rgba(255,255,255,0.2);"><i data-lucide="plus" style="width: 20px; height: 20px;"></i></button>
+            </div>
         </div>
         
         <div class="spotlight-posters" id="spotlightContainer">
@@ -37,6 +46,14 @@
     </div>
 </section>
 
+<div class="genre-filter-bar" style="margin-bottom: 40px; overflow-x: auto; display: flex; gap: 12px; padding-bottom: 15px; scrollbar-width: none;">
+    <a href="{{ url_for('dashboard') }}" class="genre-tag {% if not selected_category and not search_term %}active-accent{% endif %}" style="white-space: nowrap; padding: 12px 28px; border-radius: 14px; background: var(--mx-bg-alt); color: var(--mx-text-dim); text-decoration: none; font-weight: 700; font-size: 14px; border: 1px solid var(--mx-border); transition: var(--transition-base);">All Movies</a>
+    {% set genres = categories if categories else ['Action', 'Comedy', 'Drama', 'Horror', 'Sci-Fi', 'Thriller', 'Animation'] %}
+    {% for genre in genres %}
+        <a href="{{ url_for('dashboard', category=genre) }}" class="genre-tag {% if selected_category == genre or search_term == genre %}active-accent{% endif %}" style="white-space: nowrap; padding: 12px 28px; border-radius: 14px; background: var(--mx-bg-alt); color: var(--mx-text-dim); text-decoration: none; font-weight: 600; font-size: 14px; border: 1px solid var(--mx-border); transition: var(--transition-base);">{{ genre }}</a>
+    {% endfor %}
+</div>
+
 <div id="movieSections">
     {% if sections %}
         {% for section_name, movies in sections.items() %}
@@ -59,13 +76,24 @@
                             data-video="{{ movie.video_url }}"
                         >
                             <img src="{{ movie.thumbnail }}" alt="{{ movie.title }}" loading="lazy" onerror="this.src='https://placehold.co/600x900/0f172a/ffffff?text={{ movie.title|urlencode }}'">
+                            <div class="movie-badges" style="position: absolute; top: 20px; left: 20px; display: flex; flex-direction: column; gap: 8px; z-index: 10;">
+                                <span style="background: var(--mx-accent); color: white; padding: 4px 10px; border-radius: 6px; font-size: 10px; font-weight: 900; letter-spacing: 0.05em; text-align: center;">TOP 10</span>
+                                <span style="background: rgba(0,0,0,0.6); backdrop-filter: blur(12px); color: white; padding: 4px 10px; border-radius: 6px; font-size: 10px; font-weight: 800; border: 1px solid rgba(255,255,255,0.1); text-align: center;">4K ULTRA</span>
+                            </div>
+                            {% set is_in_watchlist = movie.id in user_watchlist %}
+                            <button class="watchlist-btn {% if is_in_watchlist %}added{% endif %}">
+                                <i data-lucide="{% if is_in_watchlist %}check{% else %}plus{% endif %}" style="width: 18px; height: 18px;"></i>
+                            </button>
                             <div class="movie-overlay">
                                 <div class="movie-card-body">
                                     <p class="category-tag">{{ movie.category }}</p>
                                     <h3>{{ movie.title }}</h3>
-                                    <div style="display: flex; align-items: center; gap: 8px; margin-top: 8px;">
-                                        <span style="background: var(--mx-accent); color: white; padding: 2px 8px; border-radius: 4px; font-size: 10px; font-weight: 900;">4+</span>
-                                        <span style="font-size: 11px; color: white; font-weight: 700;">2h 15m</span>
+                                    <div style="display: flex; align-items: center; gap: 12px; margin-top: 10px;">
+                                        <div style="display: flex; align-items: center; gap: 4px;">
+                                            <i data-lucide="star" style="width: 12px; height: 12px; fill: var(--mx-accent); stroke: var(--mx-accent);"></i>
+                                            <span style="font-size: 12px; font-weight: 800; color: white;">4.8</span>
+                                        </div>
+                                        <span style="font-size: 11px; color: rgba(255,255,255,0.7); font-weight: 600;">{{ ['1h 45m', '2h 10m', '1h 30m', '2h 30m']|random }}</span>
                                     </div>
                                 </div>
                             </div>

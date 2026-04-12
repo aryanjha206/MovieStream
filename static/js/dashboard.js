@@ -43,8 +43,68 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     document.querySelectorAll(".movie-card").forEach((card) => {
-        card.addEventListener("click", () => openPlayer(card));
+        card.addEventListener("click", (e) => {
+            // Check if watchlist button was clicked
+            if (e.target.closest('.watchlist-btn')) {
+                e.stopPropagation();
+                const btn = e.target.closest('.watchlist-btn');
+                const icon = btn.querySelector('i');
+                const isAdded = btn.classList.toggle('added');
+                
+                // Sync with server
+                fetch('/api/watchlist/toggle', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ movie_id: card.dataset.id })
+                })
+                .then(res => res.json())
+                .then(data => {
+                    if (data.success) {
+                        if (data.action === 'added') {
+                            btn.style.background = 'var(--mx-accent)';
+                            btn.style.color = 'white';
+                            icon.setAttribute('data-lucide', 'check');
+                            showToast(`Saved to Catalog`);
+                        } else {
+                            btn.style.background = 'rgba(0,0,0,0.4)';
+                            btn.style.color = 'white';
+                            icon.setAttribute('data-lucide', 'plus');
+                            showToast(`Removed from Watchlist`);
+                        }
+                        if (window.lucide) lucide.createIcons();
+                    }
+                })
+                .catch(err => {
+                    console.error("Watchlist sync failed:", err);
+                    showToast("Sync failed. Check connection.");
+                });
+                
+                return;
+            }
+            openPlayer(card);
+        });
     });
+
+    function showToast(message) {
+        const stack = document.querySelector('.flash-stack') || createFlashStack();
+        const toast = document.createElement('div');
+        toast.className = 'flash flash-success';
+        toast.innerHTML = `<span>${message}</span>`;
+        stack.appendChild(toast);
+        
+        setTimeout(() => {
+            toast.style.opacity = '0';
+            toast.style.transform = 'translateY(-20px)';
+            setTimeout(() => toast.remove(), 600);
+        }, 3000);
+    }
+
+    function createFlashStack() {
+        const stack = document.createElement('div');
+        stack.className = 'flash-stack';
+        document.body.appendChild(stack);
+        return stack;
+    }
 
     // Spotlight Rotation Logic
     const spotlightCards = document.querySelectorAll(".spotlight-card");
@@ -86,6 +146,9 @@ document.addEventListener("DOMContentLoaded", () => {
     if (closePlayer) {
         closePlayer.addEventListener("click", stopPlayer);
     }
+
+    // Dashboard specific initializations
+    if (window.lucide) lucide.createIcons();
 
     // Close modal on escape key
     document.addEventListener("keydown", (e) => {

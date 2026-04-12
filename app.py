@@ -139,6 +139,8 @@ def serialize_movie(movie):
         "embed_url": build_embed_url(movie.get("video_url", "")),
         "description": movie.get("description", ""),
         "is_trending": movie.get("is_trending", False),
+        "rating": movie.get("rating", 4.8), # Placeholder for now
+        "duration": movie.get("duration", "2h 15m"), # Placeholder for now
     }
 
 
@@ -174,11 +176,20 @@ def build_dashboard_sections(search_term="", selected_category=""):
     serialized = [serialize_movie(movie) for movie in movie_docs]
 
     if search_term or selected_category:
-        # For search or specific category, return as a single section
-        label = f"Results for '{search_term}'" if search_term else selected_category
+        # Simplified label: just the search term or category name
+        label = search_term if search_term else selected_category
         return {label: serialized}
 
     sections = {}
+    
+    # NEW: Watchlist Section (only if user is logged in and not searching)
+    if not search_term and not selected_category and session.get("user_id"):
+        user = users_collection.find_one({"_id": ObjectId(session["user_id"])})
+        if user and user.get("watchlist"):
+            watchlist_movies = list(movies_collection.find({"_id": {"$in": [ObjectId(mid) for mid in user["watchlist"]]}}))
+            if watchlist_movies:
+                sections["My Watchlist"] = [serialize_movie(m) for m in watchlist_movies]
+
     # 1. Trending first
     trending = [movie for movie in serialized if movie["is_trending"]]
     if trending:
@@ -429,6 +440,61 @@ def login():
     return render_template("login.html")
 
 
+@app.route("/profile", methods=["GET", "POST"])
+@login_required
+def profile():
+    user = users_collection.find_one({"_id": ObjectId(session["user_id"])})
+    if not user:
+        session.clear()
+        flash("Profile not found. Please log in again.", "warning")
+        return redirect(url_for("login"))
+        
+    if request.method == "POST":
+        name = request.form.get("name", "").strip()
+        new_password = request.form.get("new_password", "")
+        
+        updates = {}
+        if name:
+            updates["name"] = name
+            session["user_name"] = name
+            
+        if new_password:
+            if len(new_password) < 8:
+                flash("New password must be at least 8 characters.", "danger")
+                return redirect(url_for("profile"))
+            updates["password_hash"] = generate_password_hash(new_password)
+            
+        if updates:
+            updates["updated_at"] = utc_now()
+            users_collection.update_one({"_id": user["_id"]}, {"$set": updates})
+            flash("Profile updated successfully.", "success")
+        return redirect(url_for("profile"))
+    
+    return render_template("profile.html", user=user)
+
+
+@app.post("/api/watchlist/toggle")
+@login_required
+def watchlist_toggle():
+    movie_id = request.json.get("movie_id")
+    if not movie_id:
+        return jsonify({"error": "Movie ID required"}), 400
+    
+    user_id = ObjectId(session["user_id"])
+    user = users_collection.find_one({"_id": user_id})
+    watchlist = user.get("watchlist", [])
+    
+    if movie_id in watchlist:
+        watchlist.remove(movie_id)
+        action = "removed"
+    else:
+        watchlist.append(movie_id)
+        action = "added"
+    
+    users_collection.update_one({"_id": user_id}, {"$set": {"watchlist": watchlist}})
+    return jsonify({"success": True, "action": action, "watchlist_count": len(watchlist)})
+
+
 @app.route("/logout")
 def logout():
     session.clear()
@@ -441,12 +507,19 @@ def logout():
 def dashboard():
     search_term = request.args.get("q", "").strip()
     selected_category = request.args.get("category", "").strip()
+    user_watchlist = []
+    if session.get("user_id"):
+        user = users_collection.find_one({"_id": ObjectId(session["user_id"])})
+        if user:
+            user_watchlist = user.get("watchlist", [])
+
     return render_template(
         "dashboard.html",
         sections=build_dashboard_sections(search_term, selected_category),
         categories=get_category_names(),
         search_term=search_term,
         selected_category=selected_category,
+        user_watchlist=user_watchlist
     )
 
 

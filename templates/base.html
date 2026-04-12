@@ -35,6 +35,11 @@
                     <a href="{{ url_for('dashboard') }}#movieSections" class="nav-item" title="Explore">
                         <span class="nav-icon"><i data-lucide="clapperboard"></i></span>
                     </a>
+                    {% if is_logged_in %}
+                        <a href="{{ url_for('profile') }}" class="nav-item {% if request.endpoint == 'profile' %}active{% endif %}" title="My Account">
+                            <span class="nav-icon"><i data-lucide="user"></i></span>
+                        </a>
+                    {% endif %}
                 {% endif %}
                 {% if is_admin %}
                     <a href="{{ url_for('admin_dashboard') }}" class="nav-item {% if request.endpoint == 'admin_dashboard' %}active{% endif %}" title="Admin Control">
@@ -53,12 +58,28 @@
 
         <div class="app-content">
             <header class="app-header">
-                {% if is_logged_in or is_admin %}
-                    <form class="toolbar" method="get" action="{{ url_for('dashboard') }}">
-                        <input type="search" name="q" placeholder="Search elite catalog..." value="{{ search_term if search_term else '' }}">
-                        <button type="submit" class="button-apply">Search</button>
-                    </form>
-                {% endif %}
+                <div class="header-left">
+                    <h1 class="page-title">Elite Streaming</h1>
+                </div>
+                <div class="header-right">
+                    {% if is_logged_in or is_admin %}
+                        <form class="toolbar" method="get" action="{{ url_for('dashboard') }}">
+                            <input type="search" name="q" placeholder="Search elite catalog..." value="{{ search_term if search_term else '' }}">
+                            <button type="submit" class="button-apply"><i data-lucide="search"></i></button>
+                        </form>
+                    {% endif %}
+                    
+                    <button id="themeToggle" class="nav-item" title="Toggle Theme" style="width: 44px; height: 44px; border-radius: 12px; margin-left: 10px;">
+                        <span class="nav-icon"><i data-lucide="moon" id="themeIcon"></i></span>
+                    </button>
+
+                    {% if is_admin %}
+                        <div class="user-pill" style="pointer-events: none;">
+                            <div class="user-avatar" style="background: var(--mx-accent-gradient);">A</div>
+                            <span style="font-weight: 700; font-size: 14px; margin-right: 5px;">Admin</span>
+                        </div>
+                    {% endif %}
+                </div>
             </header>
 
             <!-- Notifications disabled as requested -->
@@ -88,6 +109,10 @@
                     <span>Admin</span>
                 </a>
             {% elif is_logged_in %}
+                <a href="{{ url_for('profile') }}" class="tab-item {% if request.endpoint == 'profile' %}active{% endif %}">
+                    <span class="tab-icon"><i data-lucide="user"></i></span>
+                    <span>Profile</span>
+                </a>
                 <a href="{{ url_for('logout') }}" class="tab-item">
                     <span class="tab-icon"><i data-lucide="log-out"></i></span>
                     <span>Logout</span>
@@ -97,6 +122,49 @@
     </div>
 
     <script>
+        // Theme Management
+        const themeToggle = document.getElementById('themeToggle');
+        const themeIcon = document.getElementById('themeIcon');
+        const body = document.documentElement;
+
+        function updateThemeIcon(isDark) {
+            if (themeIcon) {
+                themeIcon.setAttribute('data-lucide', isDark ? 'sun' : 'moon');
+                if (window.lucide) lucide.createIcons();
+            }
+        }
+
+        if (localStorage.getItem('theme') === 'dark') {
+            body.setAttribute('data-theme', 'dark');
+            updateThemeIcon(true);
+        }
+
+    // Global Intersection Observer for Liquid Reveals
+    const revealObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('active');
+            }
+        });
+    }, { threshold: 0.1 });
+
+    function initReveals() {
+        document.querySelectorAll('.reveal, .content-block, .movie-card').forEach(el => {
+            if (!el.classList.contains('reveal')) el.classList.add('reveal');
+            revealObserver.observe(el);
+        });
+    }
+
+    if (themeToggle) {
+            themeToggle.addEventListener('click', () => {
+                const isDark = body.getAttribute('data-theme') === 'dark';
+                const newTheme = isDark ? 'light' : 'dark';
+                body.setAttribute('data-theme', newTheme);
+                localStorage.setItem('theme', newTheme);
+                updateThemeIcon(!isDark);
+            });
+        }
+
         // Auto-dismiss Flash Messages
         document.addEventListener('DOMContentLoaded', () => {
             if (window.lucide) lucide.createIcons();
@@ -109,6 +177,8 @@
                     setTimeout(() => f.remove(), 600);
                 }, 4000);
             });
+
+            initReveals();
         });
     </script>
     {% block scripts %}{% endblock %}
